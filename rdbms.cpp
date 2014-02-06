@@ -3,6 +3,7 @@ RDBMS: Kade Keith, Matthew Saari, Ryan Ledbetter, Victor Gutierrez
 */
 
 // this is my commit VG
+// testing RL
 
 #include <iostream>
 #include <cstdlib>
@@ -15,7 +16,13 @@ struct Datum{
    string stringData; 
    int numData; 
  
-   Datum(){}
+   Datum(int n){
+      numData = n;
+   }
+   
+   Datum(string s){
+      numData = n
+   }
 };
 
 struct Table{
