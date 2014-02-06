@@ -27,6 +27,7 @@ struct Table{
 class Database{
     map<string, Table> allTables;
     
+    Database(){}
 };
 
 
