@@ -26,7 +26,9 @@ struct Datum{
 };
 
 struct Table{
-    vector<pair<string, vector<Datum> > > attributes;
+    //vector<pair<string, vector<Datum> > > attributes;
+    vector<vector<Datum> > attributes;
+    
        
     Table(){}
 };
@@ -42,15 +44,12 @@ int main(){
   
     //some examples of accessing the data
     Table dummyTable;
-    vector<Datum> dummyColumn;
+    vector<Datum> dummyRow;
     Datum dummyDatum;
     dummyDatum.numData=10;
-    dummyColumn.push_back(dummyDatum);
-    pair<string, vector<Datum> > dummyPair;
-    dummyPair.first = "attributeName";
-    dummyPair.second = dummyColumn;
-    dummyTable.attributes.push_back(dummyPair);
+    dummyRow.push_back(dummyDatum);
+    dummyTable.attributes.push_back(dummyRow);
     
-    cout << dummyTable.attributes[0].second[0].numData << endl;
+    cout << dummyTable.attributes[0][0] << endl;
 }
 
