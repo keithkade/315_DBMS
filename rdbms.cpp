@@ -21,7 +21,7 @@ struct Datum{
    }
    
    Datum(string s){
-      numData = n
+      stringData = s;
    }
 };
 
