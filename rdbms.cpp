@@ -45,11 +45,10 @@ int main(){
     //some examples of accessing the data
     Table dummyTable;
     vector<Datum> dummyRow;
-    Datum dummyDatum;
-    dummyDatum.numData=10;
+    Datum dummyDatum(10);
     dummyRow.push_back(dummyDatum);
     dummyTable.attributes.push_back(dummyRow);
     
-    cout << dummyTable.attributes[0][0] << endl;
+    cout << dummyTable.attributes[0][0].numData << endl;
 }
 
