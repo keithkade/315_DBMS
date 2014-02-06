@@ -7,6 +7,7 @@ RDBMS: Kade Keith, Matthew Saari, Ryan Ledbetter, Victor Gutierrez
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -22,6 +23,12 @@ struct Table{
        
     Table(){}
 };
+
+class Database{
+    map<string, Table> allTables;
+    
+};
+
 
 int main(){
   
