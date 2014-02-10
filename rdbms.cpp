@@ -18,7 +18,8 @@ struct Datum{
    int numData; 
  
    Datum(int n) : numData(n) {}
-   Datum(string s) : stringData(s), numData(-999) {}
+   //initialize as -999 so we can check if a datum is a string or an int
+   Datum(string s) : stringData(s), numData(-999) {} 
 
    //needed to compare rows and remove duplicates
    bool operator!=(const Datum &d){
@@ -180,10 +181,13 @@ public:
 		return projectionTable;
 	}
 
-	void renameAttributes(string tableName, vector<string> attributeNames){
-		allTables[tableName].attributeNames = attributeNames;
+	Table renameAttributes(string tableName, vector<string> attributeNames){
+		Table newNamesTable = allTables[tableName];
+		newNamesTable.attributeNames = attributeNames;
+		return newNamesTable;
 	}
-
+	
+	//just see if two tables are union compatible(for setUnion and setDifference)
 	bool unionCompatible(string tableName1, string tableName2){
 		vector<string> atts1 = allTables[tableName1].attributeNames;
 		vector<string> atts2 = allTables[tableName2].attributeNames;
