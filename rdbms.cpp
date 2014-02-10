@@ -24,18 +24,57 @@ struct Datum{
    bool operator!=(const Datum &d){
 	   return !(stringData == d.stringData && numData == d.numData);
    }
+   
+   bool operator==(const Datum &d){
+	   return (stringData == d.stringData && numData == d.numData);
+   }
 };
 
 struct Table{
 
+    string key1;
+    string key2;
+    
     vector<string> attributeNames;
     vector<vector<Datum> > data;
     
-    Table(vector<string> attrNames){
+    //keys are used to check for conflicts. Primary key is combination of key1 and key2
+    Table(vector<string> attrNames, string inKey1, string inKey2){
+        key1 = inKey1;
+        key2 = inKey2;
         attributeNames = attrNames;
     }
     
     Table(){}
+    
+    bool duplicateExists(vector<Datum> newRow){
+        //get indeces of primary keys
+        vector<int> keyIndeces;
+        int keyIndex1, keyIndex2;
+        bool conflictFlag1 = false;
+        bool conflictFlag2 = false;  
+        bool conflictFound = false;
+        for(int i=0; i<attributeNames.size(); i++){
+            if (attributeNames[i]==key1)
+                keyIndex1=i;
+            if (attributeNames[i]==key2)
+                keyIndex2=i;
+        }
+  
+        //check for conflicts
+        for(int i=0; i<data.size(); i++){
+            if (data[i][keyIndex1] == newRow[keyIndex1])
+                conflictFlag1 = true;
+            if (data[i][keyIndex2] == newRow[keyIndex2])
+                conflictFlag2 = true;
+            if (conflictFlag1 && conflictFlag2)
+                conflictFound=true;
+            conflictFlag1 = false;
+            conflictFlag2 = false;
+        }      
+        
+        return conflictFound;
+    }
     
     //for testing and debugging
     void printTable(){
@@ -62,8 +101,8 @@ class Database{
 public:
     Database(){}
     
-    void createTable(string tableName, vector<string> attrNames){
-        Table newTable(attrNames);
+    void createTable(string tableName, vector<string> attrNames, string key1, string key2){   
+        Table newTable(attrNames, key1, key2);
         allTables[tableName] = newTable;
     }
     
@@ -71,8 +110,12 @@ public:
         allTables.erase(tableName);
     }
     
+    //make sure that there cannot be duplicate entities
     void insertIntoTable(string tableName, vector<Datum> newRow){
-        allTables[tableName].data.push_back(newRow);   
+        if (!allTables[tableName].duplicateExists(newRow))
+                allTables[tableName].data.push_back(newRow);
+        else
+            cout << "There is already an entry in the table with that key\n";
     }
     
     void deleteFromTable(string tableName, vector<int> keyIndeces){
@@ -81,8 +124,10 @@ public:
             allTables[tableName].data[i].clear();
         }     
     }
-         
-    void updateTable(string tableName, vector<string> attributeName, vector<Datum> newValue, vector<int> keyIndeces){
+      
+    //make sure that there cannot be duplicate entities
+    void updateTable(string tableName, vector<string> attributeName, vector<Datum> newValue, vector<int> keyIndeces){     
+        vector<Datum> dupRow;   //to check for conflicts
         vector<int> attrIndeces;
         //get the indeces of the attributes to update
         for (int i=0; i<attributeName.size(); i++){
@@ -95,13 +140,18 @@ public:
         //update at the above indeces
         for (int i=0; i<keyIndeces.size(); i++){
             for (int j=0; j<attrIndeces.size(); j++){
-                allTables[tableName].data[keyIndeces[i]][attrIndeces[j]] = newValue[j];
+                dupRow = allTables[tableName].data[keyIndeces[i]];
+                dupRow[attrIndeces[j]] = newValue[j];
+                if (!allTables[tableName].duplicateExists(dupRow))
+                        allTables[tableName].data[keyIndeces[i]][attrIndeces[j]] = newValue[j];
+                else
+                    cout << "That update would cause a conflict of primary keys\n";
             }
         }
     } 
 
     Table selectFromTable(string tableName,  vector<int> keyIndeces){
-        Table retTable(allTables[tableName].attributeNames);
+        Table retTable(allTables[tableName].attributeNames, allTables[tableName].key1, allTables[tableName].key2);
         
         for (int i=0; i<keyIndeces.size(); i++){
             vector<Datum> tempRow;
@@ -113,7 +163,7 @@ public:
 
 	Table projectFromTable(string tableName, vector<string> attributeNames){
 		Table wholeTable = allTables[tableName];
-		Table projectionTable(attributeNames);
+		Table projectionTable(attributeNames, allTables[tableName].key1, allTables[tableName].key2);
 
 		//get indices in wholeTable of matching attributes
 		vector<int> attIndices;
@@ -159,7 +209,7 @@ public:
 	}
 
 	Table setUnion(string tableName1, string tableName2){
-		Table unionTable(allTables[tableName1].attributeNames);
+		Table unionTable(allTables[tableName1].attributeNames, allTables[tableName1].key1, allTables[tableName1].key2);
 		if(!unionCompatible(tableName1, tableName2)){
 			cout<<"Unable to perform set union on "<<tableName1<<" and "<<tableName2<<"."<<endl;
 			return unionTable;	//empty table
@@ -245,7 +295,7 @@ public:
 		for(int i = 0; i < t2.attributeNames.size(); ++i){
 			allAttributes.push_back(t2.attributeNames[i]);
 		}
-		Table productTable(allAttributes);
+		Table productTable(allAttributes, allTables[tableName1].key1, allTables[tableName1].key2);
 
 		//compute cross product
 		for(int firstT = 0; firstT < t1.data.size(); ++firstT){
@@ -272,7 +322,7 @@ int main(){
     vector<string> attr;
     attr.push_back("name");
     attr.push_back("age");
-    db.createTable("artists", attr);
+    db.createTable("artists", attr, "name", "age");
     vector<Datum> pablo;
     Datum pabloname("Picasso");
     Datum pabloage(100);
@@ -286,6 +336,26 @@ int main(){
     banksy.push_back(banksyname);
     banksy.push_back(banksyage);
     db.insertIntoTable("artists", banksy);
+  
+    db.insertIntoTable("artists", banksy);   //insert conflict test 
+    
+    vector<Datum> banksy2;
+    Datum banksyname2("Banksy");
+    Datum banksyage2(41);
+    banksy2.push_back(banksyname2);
+    banksy2.push_back(banksyage2);
+    db.insertIntoTable("artists", banksy2);
+    
+    vector<Datum> newVal;
+    Datum newDat(40);
+    newVal.push_back(newDat);
+    vector<int> newInd;
+    int newRowInd(1);
+    newInd.push_back(newRowInd);
+    vector<string> newAttr;
+    string newAttrName = "age";
+    newAttr.push_back(newAttrName);
+    db.updateTable("artists", newAttr, newVal, newInd); //update conflict test
     
     vector<int> zvector;
     zvector.push_back(0); 
@@ -302,6 +372,6 @@ int main(){
     dummyTable = db.selectFromTable("artists", zvector);
     dummyTable.printTable();
     
-	system("pause");
+    system("pause");
 }
 
