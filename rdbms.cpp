@@ -18,7 +18,7 @@ struct Datum{
    int numData; 
  
    Datum(int n) : numData(n) {}
-   Datum(string s) : stringData(s) {}
+   Datum(string s) : stringData(s), numData(-999) {}
 
    //needed to compare rows and remove duplicates
    bool operator!=(const Datum &d){
@@ -36,6 +36,24 @@ struct Table{
     }
     
     Table(){}
+    
+    //for testing and debugging
+    void printTable(){
+        for (int i=0; i<attributeNames.size(); i++)
+            cout << attributeNames[i] << ", ";
+        
+        cout << endl; 
+        for (int i=0; i<data.size(); i++){
+            for (int j=0; j<attributeNames.size(); j++){
+                if (data[i][j].numData == -999)
+                    cout << data[i][j].stringData << " ";
+                else
+                    cout << data[i][j].numData << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
+    }
 };
 
 class Database{
@@ -221,7 +239,7 @@ public:
 		//temp tables to make getting rows easier
 		Table t1 = allTables[tableName1];
 		Table t2 = allTables[tableName2];
-
+                
 		//need to combine t1 attributes with t2 attributes..
 		vector<string> allAttributes = t1.attributeNames;
 		for(int i = 0; i < t2.attributeNames.size(); ++i){
@@ -272,7 +290,7 @@ int main(){
     vector<int> zvector;
     zvector.push_back(0); 
     Table dummyTable = db.selectFromTable("artists", zvector);
-    cout << dummyTable.data[0][0].stringData << " " << dummyTable.data[0][1].numData << endl;
+    dummyTable.printTable();
     
     vector<string> attN;
     attN.push_back("age");
@@ -282,7 +300,7 @@ int main(){
 
     db.updateTable("artists", attN, newV, zvector);
     dummyTable = db.selectFromTable("artists", zvector);
-    cout << dummyTable.data[0][0].stringData << " " << dummyTable.data[0][1].numData << endl;
+    dummyTable.printTable();
     
 	system("pause");
 }
