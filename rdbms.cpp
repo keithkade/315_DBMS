@@ -51,6 +51,7 @@ struct Table{
     bool duplicateExists(vector<Datum> newRow){
         //get indeces of primary keys
         vector<int> keyIndices;
+        bool dupFound = false;
         int conflictCounter=0; //if it is the same as the number of keys there is a conflict
         for(int i=0; i<attributeNames.size(); i++){
             for (int j=0; j<keyNames.size(); j++)
@@ -65,9 +66,11 @@ struct Table{
                 if (data[i][j] == newRow[j])
                     conflictCounter++;
             }
+            if (conflictCounter == keyNames.size())
+                dupFound = true;
         }      
         
-        return (conflictCounter == keyNames.size());
+        return dupFound;
     }
     
     //for testing and debugging
