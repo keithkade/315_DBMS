@@ -18,7 +18,8 @@ struct Datum{
    int numData; 
  
    Datum(int n) : numData(n) {}
-   Datum(string s) : stringData(s), numData(-999) {}
+   //initialize as -999 so we can check if a datum is a string or an int
+   Datum(string s) : stringData(s), numData(-999) {} 
 
    //needed to compare rows and remove duplicates
    bool operator!=(const Datum &d){
