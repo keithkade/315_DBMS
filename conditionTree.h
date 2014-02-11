@@ -1,83 +1,74 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <cstdlib>
 #include <vector>
-#include <map>
-#include <iterator>
+#include <string>
+#include "rdbms.h"
 
 using namespace std;
 
+struct Datum;
 class ConditionNode;
 
-struct Datum{
-	string stringData;
-	int numData;
-
-	// Datums with -999 in the int variable mean it is a stringData type
-	Datum();
-	Datum(int n);
-	Datum(string s);
-
-	//needed to compare rows and remove duplicates
-	bool operator!=(const Datum &d);
-	bool operator==(const Datum &d);
+// A super class so that Variables and Literals can be used interchangably
+class LeafNode{
+public:
+	virtual Datum getValue(vector<string> &atribNames, vector<Datum> &relation) = 0;
 };
 
-struct Table{
-
-	vector<string> keyNames;
-
-	vector<string> attributeNames;
-	vector<vector<Datum> > data;
-
-	//keys are used to check for conflicts. Primary key is combination of key1 and key2
-	Table(vector<string> attrNames, vector<string> keys);
-
-	Table();
-	bool duplicateExists(vector<Datum> newRow);
-
-	//for testing and debugging
-	void printTable();
+// This will be why the atribNames and relations are sent through the getValues
+// At this leaf it will find the values
+class VariableNode : public LeafNode{
+	string varName;
+	Datum varsDatum;
+public:
+	VariableNode(string vn);
+	Datum getValue(vector<string> &atribNames, vector<Datum> &relation);
 };
 
+// a leaf node that just gives a value. 
+class LiteralNode : public LeafNode{
+	Datum data;
+public:
+	LiteralNode(string d);
+	LiteralNode(int d);
+	Datum getValue(vector<string> &atribNames, vector<Datum> &relation);
+};
 
+// Uses enum OPs to help clarify what each opperation is.
+class OperationNode{
+public:
+	enum OP{ eq = 0, neq, ls, leq, gr, geq };
+	OperationNode(OP s, LeafNode* l, LeafNode* r);
+	bool eval(vector<string> &atribNames, vector<Datum> &relation);
+private:
+	OP symbol;
+	LeafNode* left;
+	LeafNode* right;
+};
 
-
-class Database{
+// Can either recurse back to condition or continue to opperations
+class ComparisonNode{
+	OperationNode* operOpOperChild;
+	ConditionNode* conditionChild;
 
 public:
-	//MOVE BACK
-	map<string, Table> allTables;
-
-	Database();
-
-	void createTable(string tableName, vector<string> attrNames, vector<string> keys);
-
-	void dropTable(string tableName);
-
-	//make sure that there cannot be duplicate entities
-	void insertIntoTable(string tableName, vector<Datum> newRow);
-
-	void deleteFromTable(string tableName, ConditionNode condition);
-
-	//make sure that there cannot be duplicate entities
-	void updateTable(string tableName, vector<string> attributeName, vector<Datum> newValue, ConditionNode condition);
-
-	Table selectFromTable(string tableName, ConditionNode condition);
-
-	Table projectFromTable(string tableName, vector<string> attributeNames);
-
-	Table renameAttributes(string tableName, vector<string> attributeNames);
-
-	//just see if two tables are union compatible(for setUnion and setDifference)
-	bool unionCompatible(string tableName1, string tableName2);
-
-	Table setUnion(string tableName1, string tableName2);
-
-	//compute minuend - subtrahend = diference
-	Table setDifference(string tNameMinuend, string tNameSubtrahend);
-
-	Table crossProduct(string tableName1, string tableName2);
+	ComparisonNode(OperationNode* n);
+	ComparisonNode(ConditionNode* n);
+	bool eval(vector<string> &atribNames, vector<Datum> &relation);
 };
 
+// can have any number of Comparisons so will be represented in vector
+class ConjunctionNode{
+	vector<ComparisonNode*> compNodes;
+
+public:
+	ConjunctionNode(vector<ComparisonNode*> cn);
+	bool eval(vector<string> &atribNames, vector<Datum> &relation);
+};
+
+// a condition can have any number of conjuctions so will represent with vector.
+class ConditionNode{
+	vector<ConjunctionNode*> conjNodes;
+public:
+	ConditionNode(vector<ConjunctionNode*>);
+	bool eval(vector<string> &atribNames, vector<Datum> &relation);
+};
