@@ -25,26 +25,26 @@ bool OperationNode::eval(vector<string> &atribNames, vector<Datum> &relation)
 {
 	if (left->getValue(atribNames, relation).numData != -999 && right->getValue(atribNames, relation).numData != -999)
 	{
-			switch (symbol)
+		switch (symbol)
 		{
-		case OP::eq:
+		case eq:
 			return left->getValue(atribNames, relation).numData == right->getValue(atribNames, relation).numData; break;
-		case OP::neq:
+		case neq:
 			return left->getValue(atribNames, relation).numData != right->getValue(atribNames, relation).numData; break;
-		case OP::ls:
+		case ls:
 			return left->getValue(atribNames, relation).numData < right->getValue(atribNames, relation).numData; break;
-		case OP::leq:
+		case leq:
 				return left->getValue(atribNames, relation).numData <= right->getValue(atribNames, relation).numData; break;
-		case OP::gr:
+		case gr:
 			return left->getValue(atribNames, relation).numData > right->getValue(atribNames, relation).numData; break;
-		case OP::geq:
+		case geq:
 			return left->getValue(atribNames, relation).numData >= right->getValue(atribNames, relation).numData;
 			}
 	}
-	else if (left->getValue(atribNames, relation).stringData != "" && right->getValue(atribNames, relation).stringData != "")
+	else if (left->getValue(atribNames, relation).numData == -999 && right->getValue(atribNames, relation).numData == -999)
 	{
 		switch (symbol)
-			{
+		{
 		case OP::eq:
 			return left->getValue(atribNames, relation).stringData == right->getValue(atribNames, relation).stringData; break;
 		case OP::neq:
