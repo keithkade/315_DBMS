@@ -134,9 +134,9 @@ namespace rdbmsTest
 			t.push_back(Table("group", EntryTypes::INT));
 			Table tab = *new Table(t);
 
-			Assert::IsFalse(tab.Rename("FavoriteDate","DateEntered"));
+			Assert::IsFalse(tab.updateTable("FavoriteDate","DateEntered"));
 		}
-		TEST_METHOD(TableRenameTest4)
+		TEST_METHOD(TableupdateTableTest4)
 		{
 			Table t = *new Table;
 			t.push_back(Table("greeting", 0));
@@ -144,9 +144,9 @@ namespace rdbmsTest
 			t.push_back(Table("group", EntryTypes::INT));
 			Table tab = *new Table(t);
 
-			Assert::IsFalse(tab.Rename("moniker","group"));
+			Assert::IsFalse(tab.updateTable("moniker","group"));
 		}
-		TEST_METHOD(TableRenameTest5)
+		TEST_METHOD(TableupdateTableTest5)
 		{
 			Table t = *new Table;
 			t.push_back(Table("greeting", 0));
@@ -154,7 +154,7 @@ namespace rdbmsTest
 			t.push_back(Table("group", EntryTypes::INT));
 			Table tab = *new Table(t);
 
-			Assert::IsFalse(tab.Rename("moniker","moniker"));
+			Assert::IsFalse(tab.updateTable("moniker","moniker"));
 		}
 		TEST_METHOD(TableUnionTest1)
 		{
