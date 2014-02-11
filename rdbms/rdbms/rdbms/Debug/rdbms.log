@@ -1,0 +1,11 @@
+﻿Build started 2/10/2014 11:30:15 PM.
+     1>Project "C:\Users\vicfer00\Desktop\csce 315\rdbms\rdbms\rdbms\rdbms.vcxproj" on node 2 (Build target(s)).
+     1>Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\Users\vicfer00\Desktop\csce 315\rdbms\rdbms\Debug\rdbms.lib" /NOLOGO Debug\rdbms.obj
+         Debug\stdafx.obj
+         rdbms.vcxproj -> C:\Users\vicfer00\Desktop\csce 315\rdbms\rdbms\Debug\rdbms.lib
+     1>Done Building Project "C:\Users\vicfer00\Desktop\csce 315\rdbms\rdbms\rdbms\rdbms.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.44
