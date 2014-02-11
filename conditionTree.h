@@ -1,3 +1,15 @@
+/*
+	The following class will be use to find if a condition is satisfied for the database to then execute a command on a relation.
+
+	It can be used to create any logical expression the parser could need through the parameters stipulated by the problem. 
+
+	Each inner node will contain an eval function and each leaf node will have a getValue to call that will giev the value at the variable.
+
+	To solve the tree you would call the eval on the root condition node. It will recursively call eval on theirs and so forth 
+	until a leaf is reached. The leaf will either return the literal or use the parameters entered into the initial function to 
+	determine what value belongs. In the end it will return a simple true or false representing if the condition was met or not.
+*/
+
 #pragma once
 #include <vector>
 #include <string>
