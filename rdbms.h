@@ -81,3 +81,7 @@ public:
 	Table crossProduct(string tableName1, string tableName2);
 };
 
+int main()
+{
+	return 0;
+}
