@@ -131,7 +131,7 @@ namespace rdbmsTest
 			Table t = *new Table;
 			t.push_back(Table("greeting", 0));
 			t.push_back(Table("moniker", 0));
-			t.push_back(Table("group", EntryTypes::INT));
+			t.push_back(Table("group", 0));
 			Table tab = *new Table(t);
 
 			Assert::IsFalse(tab.updateTable("FavoriteDate","DateEntered"));
@@ -141,7 +141,7 @@ namespace rdbmsTest
 			Table t = *new Table;
 			t.push_back(Table("greeting", 0));
 			t.push_back(Table("moniker", 0));
-			t.push_back(Table("group", EntryTypes::INT));
+			t.push_back(Table("group", 0));
 			Table tab = *new Table(t);
 
 			Assert::IsFalse(tab.updateTable("moniker","group"));
@@ -151,7 +151,7 @@ namespace rdbmsTest
 			Table t = *new Table;
 			t.push_back(Table("greeting", 0));
 			t.push_back(Table("moniker", 0));
-			t.push_back(Table("group", EntryTypes::INT));
+			t.push_back(Table("group", 0));
 			Table tab = *new Table(t);
 
 			Assert::IsFalse(tab.updateTable("moniker","moniker"));
@@ -180,7 +180,7 @@ namespace rdbmsTest
 			Table t = *new Table;
 			t.push_back(Table("greeting", 0));
 			t.push_back(Table("moniker", 0));
-			t.push_back(Table("group", EntryTypes::INT));
+			t.push_back(Table("group", 0));
 			Table tab = *new Table(t);
 
 		}
