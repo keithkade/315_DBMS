@@ -5,13 +5,26 @@ RDBMS: Kade Keith, Matthew Saari, Ryan Ledbetter, Victor Gutierrez
 // this is my commit VG
 // testing RL
 
+//#include "rdbms.h"
+
+//#include "conditionTree.cpp"
 #include <iostream>
 #include <string>
 #include <cstdlib>
 #include <vector>
 #include <map>
+#include <iterator>
 
 using namespace std;
+
+class ConjunctionNode;
+class ComparisonNode;
+class OperationNode;
+class VariableNode;
+class LiteralNode;
+class ConditionNode;
+
+
 
 struct Datum{ 
    string stringData; 
@@ -20,7 +33,8 @@ struct Datum{
    Datum(int n) : numData(n) {}
    //initialize as -999 so we can check if a datum is a string or an int
    Datum(string s) : stringData(s), numData(-999) {} 
-
+   Datum() : numData(-999) {}
+   
    //needed to compare rows and remove duplicates
    bool operator!=(const Datum &d){
 	   return !(stringData == d.stringData && numData == d.numData);
@@ -29,6 +43,7 @@ struct Datum{
    bool operator==(const Datum &d){
 	   return (stringData == d.stringData && numData == d.numData);
    }
+
 };
 
 struct Table{
@@ -92,10 +107,73 @@ struct Table{
     }
 };
 
+
+class LeafNode{
+public:
+	virtual Datum getValue(vector<string> &atribNames, vector<Datum> &relation) = 0;
+};
+
+class VariableNode : public LeafNode{
+	string varName;
+	Datum varsDatum;
+public:
+	VariableNode(string vn);
+	Datum getValue(vector<string> &atribNames, vector<Datum> &relation);
+};
+
+class LiteralNode : public LeafNode{
+	Datum data;
+public:
+	LiteralNode(string d);
+        LiteralNode(int d);
+	Datum getValue(vector<string> &atribNames, vector<Datum> &relation);
+};
+
+class OperationNode{
+public:
+    	enum OP{eq = 0, neq, ls, leq, gr, geq};
+	OperationNode(OP s, LeafNode* l, LeafNode* r);
+	bool eval(vector<string> &atribNames, vector<Datum> &relation);
+private:
+    	OP symbol;
+	LeafNode* left;
+	LeafNode* right;
+};
+
+class ComparisonNode{
+	OperationNode* operOpOperChild;
+	ConditionNode* conditionChild;
+
+public:
+	ComparisonNode(OperationNode* n);
+	ComparisonNode(ConditionNode* n);
+	bool eval(vector<string> &atribNames, vector<Datum> &relation);
+};
+
+class ConjunctionNode{
+	vector<ComparisonNode*> compNodes;
+
+public:
+	ConjunctionNode(vector<ComparisonNode*> cn);
+	bool eval(vector<string> &atribNames, vector<Datum> &relation);
+};
+
+class ConditionNode{
+	vector<ConjunctionNode*> conjNodes;
+public:
+	ConditionNode(vector<ConjunctionNode*>);
+	bool eval(vector<string> &atribNames, vector<Datum> &relation);
+};
+
+
+
+
 class Database{
+      
+public:
+    //MOVE BACK
     map<string, Table> allTables;
     
-public:
     Database(){}
     
     void createTable(string tableName, vector<string> attrNames, vector<string> keys){   
@@ -117,7 +195,8 @@ public:
     
     void deleteFromTable(string tableName, ConditionNode condition)
     {
-        vector<vector<Datum>>::iterator it = allTables[tableName].data.end();
+        vector<vector<Datum> >::iterator it;
+        it = allTables[tableName].data.end();
         while (it != allTables[tableName].data.begin())
 		{
 	    	it--;
@@ -322,6 +401,108 @@ public:
 };
 
 
+
+
+
+
+
+VariableNode::VariableNode(string vn) : varName(vn){}
+Datum VariableNode::getValue(vector<string> &atribNames, vector<Datum> &relation)
+{
+	for (int i = 0; i < atribNames.size(); i++)
+	{
+		if (atribNames[i] == varName)
+		{
+			return relation[i];
+		}
+	}
+}
+
+
+LiteralNode::LiteralNode(string d) : data(d){}
+LiteralNode::LiteralNode(int d) : data(d){}
+Datum LiteralNode::getValue(vector<string> &atribNames, vector<Datum> &relation)
+{ 
+	return data; 
+}
+
+OperationNode::OperationNode(OP s, LeafNode* l, LeafNode* r) : symbol(s), left(l), right(r) {}
+bool OperationNode::eval(vector<string> &atribNames, vector<Datum> &relation)
+{
+	if (left->getValue(atribNames, relation).numData != -999 && right->getValue(atribNames, relation).numData != -999)
+	{
+			switch (symbol)
+		{
+                case eq:
+			return left->getValue(atribNames, relation).numData == right->getValue(atribNames, relation).numData; break;
+		case neq:
+			return left->getValue(atribNames, relation).numData != right->getValue(atribNames, relation).numData; break;
+		case ls:
+			return left->getValue(atribNames, relation).numData < right->getValue(atribNames, relation).numData; break;
+		case leq:
+				return left->getValue(atribNames, relation).numData <= right->getValue(atribNames, relation).numData; break;
+		case gr:
+			return left->getValue(atribNames, relation).numData > right->getValue(atribNames, relation).numData; break;
+		case geq:
+			return left->getValue(atribNames, relation).numData >= right->getValue(atribNames, relation).numData;
+			}
+	}
+	else if (left->getValue(atribNames, relation).stringData != "" && right->getValue(atribNames, relation).stringData != "")
+	{
+		switch (symbol)
+			{
+		case eq:
+			return left->getValue(atribNames, relation).stringData == right->getValue(atribNames, relation).stringData; break;
+		case neq:
+			return left->getValue(atribNames, relation).stringData != right->getValue(atribNames, relation).stringData; break;
+		}
+	}
+	else{
+		return false;
+	}
+}
+
+
+
+ComparisonNode::ComparisonNode(OperationNode* n) : operOpOperChild(n){}
+ComparisonNode::ComparisonNode(ConditionNode* n) : conditionChild(n){}
+bool ComparisonNode::eval(vector<string> &atribNames, vector<Datum> &relation){
+	if (operOpOperChild != NULL)
+	{
+		return operOpOperChild->eval(atribNames, relation);
+	}
+		else if (conditionChild != NULL)
+	{
+		return conditionChild->eval(atribNames, relation);
+	}
+	else{
+		return false;
+	}
+}
+
+ConjunctionNode::ConjunctionNode(vector<ComparisonNode*> cn) : compNodes(cn) {}
+bool ConjunctionNode::eval(vector<string> &atribNames, vector<Datum> &relation){
+	bool result = true;
+	for (unsigned int i = 0; i < compNodes.size(); i++)
+	{
+		result = result && compNodes[i]->eval(atribNames, relation);
+	}
+	return result;
+}
+
+
+ConditionNode::ConditionNode(vector<ConjunctionNode*> cn) : conjNodes(cn) {}
+bool ConditionNode::eval(vector<string> &atribNames, vector<Datum> &relation){
+	bool result = false;
+	for (unsigned int i = 0; i < conjNodes.size(); i++)
+	{
+		result = result || conjNodes[i]->eval(atribNames, relation);
+	}
+	return result;
+}
+
+
+
 int main(){
 
     Database db;
@@ -369,7 +550,7 @@ int main(){
     vector<int> zvector;
     zvector.push_back(0); 
     Table dummyTable = db.selectFromTable("artists", zvector);
-    dummyTable.printTable();
+    //dummyTable.printTable();
     
     vector<string> attN;
     attN.push_back("age");
@@ -379,7 +560,23 @@ int main(){
 
     db.updateTable("artists", attN, newV, zvector);
     dummyTable = db.selectFromTable("artists", zvector);
-    dummyTable.printTable();
+    //dummyTable.printTable();
+    
+    LiteralNode* litN = new LiteralNode("Picasso");
+    VariableNode* varN = new VariableNode("name");
+    OperationNode* opN = new OperationNode(OperationNode::eq, litN, varN);
+    ComparisonNode* compN = new ComparisonNode(opN);
+    vector<ComparisonNode*> temp;
+    temp.push_back(compN);
+    ConjunctionNode* conjN = new ConjunctionNode(temp);
+    vector<ConjunctionNode*> temp2;
+    ConditionNode* condition = new ConditionNode(temp2);
+    
+    vector<string> attr2;
+    attr2.push_back("name");
+    db.allTables["artists"].printTable();
+    
+    cout << "eval result: " << condition->eval(attr2, db.allTables["artists"].data[0]); 
     
     system("pause");
 }
