@@ -115,11 +115,17 @@ public:
             cout << "There is already an entry in the table with that key\n";
     }
     
-    void deleteFromTable(string tableName, vector<int> keyIndeces){
-        //may need to adjust order of loop if vector auto resizes
-        for (int i=0; i<keyIndeces.size(); i++){
-            allTables[tableName].data[i].clear();
-        }     
+    void deleteFromTable(string tableName, ConditionNode condition)
+    {
+        vector<vector<Datum>>::iterator it = allTables[tableName].data.end();
+        while (it != allTables[tableName].data.begin())
+		{
+	    	it--;
+	    	if (condition.eval(allTables[tableName].attributeNames, *it))
+	    	{
+	        	allTables[tableName].data.erase(it);
+	    	}
+        }
     }
       
     //make sure that there cannot be duplicate entities
