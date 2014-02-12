@@ -76,7 +76,7 @@ vector<Token> queryLex(string line){
 
 int main(){
 	string line;
-	vector<vector<string>> lexedInput;
+	vector<vector<Token>> lexedInput;
 	int i;
 	ifstream inFile("parser_milestone_good_inputs.txt");
 	while (getline(inFile, line, ';')) {
