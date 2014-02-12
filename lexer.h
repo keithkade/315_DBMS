@@ -4,7 +4,7 @@
 using namespace std;
 
 struct Token{
-	enum tokenType {ATTRIBUTE, VARIABLE, LITERAL, KEYWORD, SYMBOL, TABLE};
+	enum tokenType {VARIABLE, LITERAL, KEYWORD, SYMBOL, OPENPAREN, CLOSEPAREN};
 	tokenType type;
 	string content;
 
