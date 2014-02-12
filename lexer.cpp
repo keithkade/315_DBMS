@@ -87,6 +87,7 @@ int main(){
 		else{
 			lexedRow = commandLex(line);
 		}
+		lexedInput.push_back(lexedRow);
 	}
 	int n;
 	cin >> n;
