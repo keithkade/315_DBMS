@@ -5,9 +5,7 @@ RDBMS: Kade Keith, Matthew Saari, Ryan Ledbetter, Victor Gutierrez
 // this is my commit VG
 // testing RL
 
-//#include "rdbms.h"
 
-//#include "conditionTree.cpp"
 #pragma once
 #include "rdbms.h"
 #include "ConditionTree.h"

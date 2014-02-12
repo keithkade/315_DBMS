@@ -27,11 +27,10 @@ struct Datum{
 struct Table{
 
 	vector<string> keyNames;
-
 	vector<string> attributeNames;
 	vector<vector<Datum> > data;
 
-	//keys are used to check for conflicts. Primary key is combination of key1 and key2
+	//keys are used to check for conflicts. 
 	Table(vector<string> attrNames, vector<string> keys);
 
 	Table();
@@ -80,8 +79,3 @@ public:
 
 	Table crossProduct(string tableName1, string tableName2);
 };
-
-int main()
-{
-	return 0;
-}
