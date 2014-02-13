@@ -16,6 +16,7 @@ void makeCommVarTok(vector<Token> & afterRetVecter, string in){
 		commandNameTok.content = in;
 		afterRetVecter.push_back(commandNameTok);
 	}
+	//else if the entire thing is numeral make literal
 	//check against quotes is to ensure literals do not get lexed twice
 	else if (in[0] != '"'){
 		Token tableNameTok(Token::tokenType::VARIABLE);
