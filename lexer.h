@@ -1,5 +1,9 @@
 
 #include <string>
+#include <fstream>
+#include <regex>
+#include <iostream>
+#include <vector>
 
 using namespace std;
 

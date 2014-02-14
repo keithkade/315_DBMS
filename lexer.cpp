@@ -1,22 +1,36 @@
-//
+
 
 
 #include "lexer.h"
-#include <fstream>
-#include <regex>
-#include <iostream>
-#include <vector>
 
 using namespace std;
 
-//distinguishes a sequence of character between a keyword and an unknown, the creates appropriate token 
+bool isNumLiteral(string s){
+	for (int i = 0; i < s.size(); i++)
+		if (isalpha(s[i]))
+			return false;
+	return true;
+}
+
+//distinguishes a sequence of character between a keyword, numeric literal, and an unknown, then creates appropriate token 
 void makeCommVarTok(vector<Token> & afterRetVecter, string in){
-	if (in == "project" || in == "rename" || in == "select"){
+	if (in == "project" || in == "rename" || in == "select" || in == "JOIN" || in == "SHOW" || in == "DELETE" || 
+		in == "FROM" || in == "INSERT" || in == "INTO" || in == "UPDATE" || in == "CREATE" || in == "TABLE" ||
+		in == "OPEN" || in == "CLOSE" || in == "WRITE" || in == "EXIT" || in == "PRIMARY" || in == "KEY" || 
+		in == "VARCHAR" || in == "INTEGER"){
 		Token commandNameTok(Token::tokenType::KEYWORD);
 		commandNameTok.content = in;
 		afterRetVecter.push_back(commandNameTok);
 	}
-	//else if the entire thing is numeral make literal
+	//make sure empty string is not lexed
+	else if (in == ""){
+		return;
+	}
+	else if (isNumLiteral(in)){
+		Token numLiteralTok(Token::tokenType::LITERAL);
+		numLiteralTok.content = in;
+		afterRetVecter.push_back(numLiteralTok);
+	}
 	//check against quotes is to ensure literals do not get lexed twice
 	else if (in[0] != '"'){
 		Token tableNameTok(Token::tokenType::VARIABLE);
@@ -25,27 +39,14 @@ void makeCommVarTok(vector<Token> & afterRetVecter, string in){
 	}
 }
 
-vector<Token> commandLex(string line){
-	vector<Token> retRow;
-	
-	return retRow;
-}
-
-//does not yet identify numbers as literals
 vector<Token> afterAssignQueryLex(string line){
 	vector<Token> afterRetVecter;
 	
 	string curString=""; //contents of token accumulate on this
-	int stringPos=0;
+	int stringPos=0; //current position in string
 
 	while (stringPos <= line.size()){
 		char curChar = line[stringPos];
-
-		//ignore spaces
-		if (curChar == ' '){
-			stringPos++;
-			continue;
-		}
 
 		//needed to get the last token in the string
 		if (stringPos == line.size()){
@@ -55,11 +56,11 @@ vector<Token> afterAssignQueryLex(string line){
 		}
 
 		//if it is an alphanumeric or _ add it to our surrent string
-		if (isalnum(curChar) || curChar == '_'){
+		else if (isalnum(curChar) || curChar == '_'){
 			curString += curChar;
 		}
 
-		if (curChar == '('){
+		else if (curChar == '('){
 			//if parenthesis are adjacent the curString might be empty, so this checks for that
 			if (curString != "")
 				makeCommVarTok(afterRetVecter, curString);
@@ -69,7 +70,7 @@ vector<Token> afterAssignQueryLex(string line){
 			afterRetVecter.push_back(parenTok);
 		}
 
-		if (curChar == ')'){
+		else if (curChar == ')'){
 			if (curString != "")
 				makeCommVarTok(afterRetVecter, curString);
 			curString = "";
@@ -78,15 +79,16 @@ vector<Token> afterAssignQueryLex(string line){
 			afterRetVecter.push_back(parenTok);
 		}
 
-		if (curChar == ','){
-			makeCommVarTok(afterRetVecter, curString);
+		else if (curChar == ','){
+			if (curString != "")
+				makeCommVarTok(afterRetVecter, curString);
 			curString = "";
 			Token commaTok(Token::tokenType::SYMBOL);
 			commaTok.content = ',';
 			afterRetVecter.push_back(commaTok);
 		}
 
-		if (curChar == '+'){
+		else if (curChar == '+'){
 			makeCommVarTok(afterRetVecter, curString);
 			curString = "";
 			Token plusTok(Token::tokenType::SYMBOL);
@@ -94,7 +96,7 @@ vector<Token> afterAssignQueryLex(string line){
 			afterRetVecter.push_back(plusTok);
 		}
 
-		if (curChar == '-'){
+		else if (curChar == '-'){
 			makeCommVarTok(afterRetVecter, curString);
 			curString = "";
 			Token minusTok(Token::tokenType::SYMBOL);
@@ -102,7 +104,7 @@ vector<Token> afterAssignQueryLex(string line){
 			afterRetVecter.push_back(minusTok);
 		}
 
-		if (curChar == '*'){
+		else if (curChar == '*'){
 			makeCommVarTok(afterRetVecter, curString);
 			curString = "";
 			Token prodTok(Token::tokenType::SYMBOL);
@@ -110,7 +112,7 @@ vector<Token> afterAssignQueryLex(string line){
 			afterRetVecter.push_back(prodTok);
 		}
 
-		if (curChar == '<'){
+		else if (curChar == '<'){
 			makeCommVarTok(afterRetVecter, curString);
 			curString = "";
 			//can be < or <=
@@ -128,7 +130,7 @@ vector<Token> afterAssignQueryLex(string line){
 			stringPos++; //skip over next char since we have accounted for it
 		}
 
-		if (curChar == '>'){
+		else if (curChar == '>'){
 			makeCommVarTok(afterRetVecter, curString);
 			curString = "";
 			//can be > or >=
@@ -146,7 +148,9 @@ vector<Token> afterAssignQueryLex(string line){
 			stringPos++; //skip over next char since we have accounted for it
 		}
 
-		if (curChar == '='){
+
+
+		else if (curChar == '='){
 			makeCommVarTok(afterRetVecter, curString);
 			curString = "";
 			if (line[stringPos + 1] == '='){
@@ -158,7 +162,8 @@ vector<Token> afterAssignQueryLex(string line){
 			stringPos++; //skip over next char since we have accounted for it
 		}
 
-		if (curChar == '"'){
+		//if it is surrounded by quotes then it is a literal
+		else if (curChar == '"'){
 			if (isalnum(line[stringPos + 1])){
 				int nextQuotePos;
 				curString = "";
@@ -174,13 +179,11 @@ vector<Token> afterAssignQueryLex(string line){
 				continue;
 			}
 		}
-
+		
 		stringPos++;
 	}
-
 	return afterRetVecter;
 }
-
 
 vector<Token> queryLex(string line){
 	vector<Token> retRow;
@@ -213,6 +216,165 @@ vector<Token> queryLex(string line){
 	return retRow;
 }
 
+vector<Token> commandLex(string line){
+	vector<Token> retRow;
+
+	//trim possible newline characters
+	if (line[0] == '\n')
+		line.erase(line.begin());
+	if (line[0] == '\n')
+		line.erase(line.begin());
+
+	string curString = ""; //contents of token accumulate on this
+	int stringPos = 0; //current position in string
+
+	while (stringPos <= line.size()){
+		char curChar = line[stringPos];
+
+
+		//ignore repeated spaces
+		if (curChar == ' ' && line[stringPos + 1] != ' '){
+			makeCommVarTok(retRow, curString);
+			curString = "";
+		}
+
+		//needed to get the last token in the string
+		else if (stringPos == line.size()){
+			//if end of string is paren then curstring mught be empty, so this checks for that
+			if (curString != "")
+				makeCommVarTok(retRow, curString);
+		}
+
+		//if it is an alphanumeric or _ add it to our surrent string
+		else if (isalnum(curChar) || curChar == '_'){
+			curString += curChar;
+		}
+
+		//if it is surrounded by quotes then it is a literal
+		else if (curChar == '"'){
+			if (isalnum(line[stringPos + 1])){
+				int nextQuotePos;
+				curString = "";
+				nextQuotePos = line.find('\"', stringPos + 1);
+				curString = line.substr(stringPos, (nextQuotePos - stringPos) + 1);
+				Token litTok(Token::tokenType::LITERAL);
+				litTok.content = curString;
+				retRow.push_back(litTok);
+				stringPos += (nextQuotePos - stringPos); //skip over the rest of token
+			}
+			else {
+				stringPos++;
+				continue;
+			}
+		}
+
+		else if (curChar == '('){
+			//if parenthesis are adjacent the curString might be empty, so this checks for that
+			if (curString != "")
+				makeCommVarTok(retRow, curString);
+			curString = "";
+			Token parenTok(Token::tokenType::OPENPAREN);
+			parenTok.content = '(';
+			retRow.push_back(parenTok);
+		}
+
+		else if (curChar == ')'){
+			if (curString != "")
+				makeCommVarTok(retRow, curString);
+			curString = "";
+			Token parenTok(Token::tokenType::CLOSEPAREN);
+			parenTok.content = ')';
+			retRow.push_back(parenTok);
+		}
+
+		else if (curChar == ','){
+			if (curString != "")
+				makeCommVarTok(retRow, curString);
+			curString = "";
+			Token commaTok(Token::tokenType::SYMBOL);
+			commaTok.content = ',';
+			retRow.push_back(commaTok);
+		}
+
+		else if (curChar == '+'){
+			makeCommVarTok(retRow, curString);
+			curString = "";
+			Token plusTok(Token::tokenType::SYMBOL);
+			plusTok.content = '+';
+			retRow.push_back(plusTok);
+		}
+
+		else if (curChar == '-'){
+			makeCommVarTok(retRow, curString);
+			curString = "";
+			Token minusTok(Token::tokenType::SYMBOL);
+			minusTok.content = '+';
+			retRow.push_back(minusTok);
+		}
+
+		else if (curChar == '*'){
+			makeCommVarTok(retRow, curString);
+			curString = "";
+			Token prodTok(Token::tokenType::SYMBOL);
+			prodTok.content = '+';
+			retRow.push_back(prodTok);
+		}
+
+		else if (curChar == '<'){
+			makeCommVarTok(retRow, curString);
+			curString = "";
+			//can be < or <=
+			if (line[stringPos + 1] == '='){
+				Token lessEqTok(Token::tokenType::SYMBOL);
+				lessEqTok.content = "<=";
+				retRow.push_back(lessEqTok);
+			}
+			else if (line[stringPos + 1] == ' '){
+				Token lessTok(Token::tokenType::SYMBOL);
+				lessTok.content = "<";
+				retRow.push_back(lessTok);
+			}
+			else cout << "ERROR when parsing a <" << endl;
+			stringPos++; //skip over next char since we have accounted for it
+		}
+
+		else if (curChar == '>'){
+			makeCommVarTok(retRow, curString);
+			curString = "";
+			//can be > or >=
+			if (line[stringPos + 1] == '='){
+				Token greatEqTok(Token::tokenType::SYMBOL);
+				greatEqTok.content = ">=";
+				retRow.push_back(greatEqTok);
+			}
+			else if (line[stringPos + 1] == ' '){
+				Token greatTok(Token::tokenType::SYMBOL);
+				greatTok.content = ">";
+				retRow.push_back(greatTok);
+			}
+			else cout << "ERROR when parsing a >" << endl;
+			stringPos++; //skip over next char since we have accounted for it
+		}
+
+		else if (curChar == '='){
+			makeCommVarTok(retRow, curString);
+			curString = "";
+			if (line[stringPos + 1] == '='){
+				Token eqTok(Token::tokenType::SYMBOL);
+				eqTok.content = "==";
+				retRow.push_back(eqTok);
+			}
+			else cout << "ERROR when parsing a =" << endl;
+			stringPos++; //skip over next char since we have accounted for it
+		}
+
+
+		stringPos++;
+	}
+
+
+	return retRow;
+}
 
 int main(){
 	string line;
@@ -229,6 +391,9 @@ int main(){
 		}
 		else{
 			lexedRow = commandLex(line);
+			for (int i = 0; i < lexedRow.size(); i++)
+				cout << "'" << lexedRow[i].content << "' ";
+			cout << endl << endl;
 		}
 		lexedInput.push_back(lexedRow);
 	}
