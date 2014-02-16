@@ -39,6 +39,7 @@ void makeCommVarTok(vector<Token> & afterRetVecter, string in){
 	}
 }
 
+//lex the possibly nested protion of a query
 vector<Token> afterAssignQueryLex(string line){
 	vector<Token> afterRetVecter;
 	
@@ -198,6 +199,7 @@ vector<Token> afterAssignQueryLex(string line){
 	return afterRetVecter;
 }
 
+//lex queries
 vector<Token> queryLex(string line){
 	vector<Token> retRow;
 	vector<Token> afterAssignRow;
@@ -231,6 +233,7 @@ vector<Token> queryLex(string line){
 	return retRow;
 }
 
+//lex commands
 vector<Token> commandLex(string line){
 	vector<Token> retRow;
 
@@ -404,11 +407,12 @@ vector<Token> commandLex(string line){
 	return retRow;
 }
 
-int main(){
+//take an input file and lex it
+vector<vector<Token> > lexFile(string fileName){
 	string line;
 	vector<vector<Token>> lexedInput;
 	int i;
-	ifstream inFile("parser_milestone_good_inputs.txt");
+	ifstream inFile(fileName);
 	while (getline(inFile, line, ';')) {
 		vector<Token> lexedRow;
 		if (line.find("<-") != std::string::npos){
@@ -427,6 +431,35 @@ int main(){
 		}
 		lexedInput.push_back(lexedRow);
 	}
+	return lexedInput;
+}
+
+//lex a single command or query
+vector<vector<Token> > lexInputLine(string inputLine){
+	vector<vector<Token>> lexedInput;
+	vector<Token> lexedRow;
+
+	if (inputLine.find("<-") != std::string::npos){
+		lexedRow = queryLex(inputLine);
+		for (int i = 0; i < lexedRow.size(); i++){
+			cout << "'" << lexedRow[i].content << "' ";
+		}
+		cout << endl << endl;
+	}
+	else{
+		lexedRow = commandLex(inputLine);
+		for (int i = 0; i < lexedRow.size(); i++){
+			cout << "'" << lexedRow[i].content << "' ";
+		}
+		cout << endl << endl;
+	}
+	lexedInput.push_back(lexedRow);
+	
+	return lexedInput;
+}
+
+int main(){
+	lexFile("parser_milestone_good_inputs.txt");
 	int n;
 	cin >> n;
 }

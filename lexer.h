@@ -19,3 +19,8 @@ struct Token{
 	}
 };
 
+//take an input file and lex it
+std::vector<std::vector<Token> > lexFile(std::string fileName);
+
+//lex a single command or query
+std::vector<std::vector<Token> > lexInputLine(std::string inputLine);
