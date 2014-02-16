@@ -50,9 +50,10 @@ vector<Token> afterAssignQueryLex(string line){
 
 		//needed to get the last token in the string
 		if (stringPos == line.size()){
-			//if end of string is paren then curstring mught be empty, so this checks for that
-			if (curString != "")
+			//if end of string is paren then curstring might be empty, so this checks for that
+			if (curString != ""){
 				makeCommVarTok(afterRetVecter, curString);
+			}
 		}
 
 		//if it is an alphanumeric or _ add it to our surrent string
@@ -62,8 +63,9 @@ vector<Token> afterAssignQueryLex(string line){
 
 		else if (curChar == '('){
 			//if parenthesis are adjacent the curString might be empty, so this checks for that
-			if (curString != "")
+			if (curString != ""){
 				makeCommVarTok(afterRetVecter, curString);
+			}
 			curString = "";
 			Token parenTok(Token::tokenType::OPENPAREN);
 			parenTok.content = '(';
@@ -71,8 +73,9 @@ vector<Token> afterAssignQueryLex(string line){
 		}
 
 		else if (curChar == ')'){
-			if (curString != "")
+			if (curString != ""){
 				makeCommVarTok(afterRetVecter, curString);
+			}
 			curString = "";
 			Token parenTok(Token::tokenType::CLOSEPAREN);
 			parenTok.content = ')';
@@ -80,8 +83,9 @@ vector<Token> afterAssignQueryLex(string line){
 		}
 
 		else if (curChar == ','){
-			if (curString != "")
+			if (curString != ""){
 				makeCommVarTok(afterRetVecter, curString);
+			}
 			curString = "";
 			Token commaTok(Token::tokenType::SYMBOL);
 			commaTok.content = ',';
@@ -126,7 +130,10 @@ vector<Token> afterAssignQueryLex(string line){
 				lessTok.content = "<";
 				afterRetVecter.push_back(lessTok);
 			}
-			else cout << "ERROR when parsing a <" << endl;
+			else {
+				cout << "ERROR when parsing a <" << endl;
+				break;
+			}
 			stringPos++; //skip over next char since we have accounted for it
 		}
 
@@ -144,7 +151,10 @@ vector<Token> afterAssignQueryLex(string line){
 				greatTok.content = ">";
 				afterRetVecter.push_back(greatTok);
 			}
-			else cout << "ERROR when parsing a >" << endl;
+			else {
+				cout << "ERROR when parsing a >" << endl;
+				break;
+			}
 			stringPos++; //skip over next char since we have accounted for it
 		}
 
@@ -158,7 +168,10 @@ vector<Token> afterAssignQueryLex(string line){
 				eqTok.content = "==";
 				afterRetVecter.push_back(eqTok);
 			}
-			else cout << "ERROR when parsing a =" << endl;
+			else {
+				cout << "ERROR when parsing a =" << endl;
+				break;
+			}
 			stringPos++; //skip over next char since we have accounted for it
 		}
 
@@ -190,10 +203,12 @@ vector<Token> queryLex(string line){
 	vector<Token> afterAssignRow;
 
 	//trim possible newline characters
-	if (line[0] == '\n')
+	if (line[0] == '\n'){
 		line.erase(line.begin());
-	if (line[0] == '\n')
+	}
+	if (line[0] == '\n'){
 		line.erase(line.begin());
+	}
 
 	//name of variable we return to
 	Token varTok(Token::tokenType::VARIABLE);
@@ -220,17 +235,18 @@ vector<Token> commandLex(string line){
 	vector<Token> retRow;
 
 	//trim possible newline characters
-	if (line[0] == '\n')
+	if (line[0] == '\n'){
 		line.erase(line.begin());
-	if (line[0] == '\n')
+	}
+	if (line[0] == '\n'){
 		line.erase(line.begin());
+	}
 
 	string curString = ""; //contents of token accumulate on this
 	int stringPos = 0; //current position in string
 
 	while (stringPos <= line.size()){
 		char curChar = line[stringPos];
-
 
 		//ignore repeated spaces
 		if (curChar == ' ' && line[stringPos + 1] != ' '){
@@ -270,8 +286,9 @@ vector<Token> commandLex(string line){
 
 		else if (curChar == '('){
 			//if parenthesis are adjacent the curString might be empty, so this checks for that
-			if (curString != "")
+			if (curString != ""){
 				makeCommVarTok(retRow, curString);
+			}
 			curString = "";
 			Token parenTok(Token::tokenType::OPENPAREN);
 			parenTok.content = '(';
@@ -279,8 +296,9 @@ vector<Token> commandLex(string line){
 		}
 
 		else if (curChar == ')'){
-			if (curString != "")
+			if (curString != ""){
 				makeCommVarTok(retRow, curString);
+			}
 			curString = "";
 			Token parenTok(Token::tokenType::CLOSEPAREN);
 			parenTok.content = ')';
@@ -288,8 +306,9 @@ vector<Token> commandLex(string line){
 		}
 
 		else if (curChar == ','){
-			if (curString != "")
+			if (curString != ""){
 				makeCommVarTok(retRow, curString);
+			}
 			curString = "";
 			Token commaTok(Token::tokenType::SYMBOL);
 			commaTok.content = ',';
@@ -334,7 +353,10 @@ vector<Token> commandLex(string line){
 				lessTok.content = "<";
 				retRow.push_back(lessTok);
 			}
-			else cout << "ERROR when parsing a <" << endl;
+			else {
+				cout << "ERROR when parsing a <" << endl;
+				break;
+			}
 			stringPos++; //skip over next char since we have accounted for it
 		}
 
@@ -352,7 +374,10 @@ vector<Token> commandLex(string line){
 				greatTok.content = ">";
 				retRow.push_back(greatTok);
 			}
-			else cout << "ERROR when parsing a >" << endl;
+			else {
+				cout << "ERROR when parsing a >" << endl;
+				break;
+			}
 			stringPos++; //skip over next char since we have accounted for it
 		}
 
@@ -364,7 +389,10 @@ vector<Token> commandLex(string line){
 				eqTok.content = "==";
 				retRow.push_back(eqTok);
 			}
-			else cout << "ERROR when parsing a =" << endl;
+			else {
+				cout << "ERROR when parsing a =" << endl;
+				break;
+			}
 			stringPos++; //skip over next char since we have accounted for it
 		}
 
@@ -385,14 +413,16 @@ int main(){
 		vector<Token> lexedRow;
 		if (line.find("<-") != std::string::npos){
 			lexedRow = queryLex(line);
-			for (int i = 0; i < lexedRow.size(); i++)
+			for (int i = 0; i < lexedRow.size(); i++){
 				cout << "'" << lexedRow[i].content << "' ";
+			}
 			cout << endl << endl;
 		}
 		else{
 			lexedRow = commandLex(line);
-			for (int i = 0; i < lexedRow.size(); i++)
+			for (int i = 0; i < lexedRow.size(); i++){
 				cout << "'" << lexedRow[i].content << "' ";
+			}
 			cout << endl << endl;
 		}
 		lexedInput.push_back(lexedRow);

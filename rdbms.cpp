@@ -2,14 +2,13 @@
 RDBMS: Kade Keith, Matthew Saari, Ryan Ledbetter, Victor Gutierrez
 */
 
-// this is my commit VG
-// testing RL
-
-
 #pragma once
 #include "rdbms.h"
 #include "ConditionTree.h"
 
+using namespace std;
+
+// Datums with -999 in the int variable mean it is a stringData type
 Datum::Datum() : stringData(""), numData(-999){}
 Datum::Datum(int n) : numData(n) {}
 Datum::Datum(string s) : stringData(s), numData(-999) {}
@@ -32,39 +31,46 @@ Table::Table(vector<string> attrNames, vector<string> keys){
 
 bool Table::duplicateExists(vector<Datum> newRow){
 	vector<int> keyIndices;
-	bool dupFound = false;
+	bool duplicateFound = false;
 	int conflictCounter = 0; //if it is the same as the number of keys there is a conflict
 	for (int i = 0; i<attributeNames.size(); i++){
-		for (int j = 0; j<keyNames.size(); j++)
-			if (attributeNames[i] == keyNames[j])
+		for (int j = 0; j < keyNames.size(); j++){
+			if (attributeNames[i] == keyNames[j]){
 				keyIndices.push_back(i);
+			}
+		}
 	}
 
 	//check for conflicts
 	for (int i = 0; i<data.size(); i++){
 		conflictCounter = 0;
 		for (int j = 0; j<keyNames.size(); j++){
-			if (data[i][j] == newRow[j])
+			if (data[i][j] == newRow[j]){
 				conflictCounter++;
+			}
 		}
-		if (conflictCounter == keyNames.size())
-			dupFound = true;
+		if (conflictCounter == keyNames.size()){
+			duplicateFound = true;
+		}
 	}
-	return dupFound;
+	return duplicateFound;
 }
 
 	
 void Table::printTable(){
-	for (int i = 0; i<attributeNames.size(); i++)
+	for (int i = 0; i < attributeNames.size(); i++){
 		cout << attributeNames[i] << ", ";
+	}
 
 	cout << endl;
 	for (int i = 0; i<data.size(); i++){
 		for (int j = 0; j<attributeNames.size(); j++){
-			if (data[i][j].numData == -999)
+			if (data[i][j].numData == -999){
 				cout << data[i][j].stringData << " ";
-			else
+			}
+			else{
 				cout << data[i][j].numData << " ";
+			}
 		}
 		cout << endl;
 	}
@@ -86,10 +92,12 @@ void Database::dropTable(string tableName){
 }
 
 void Database::insertIntoTable(string tableName, vector<Datum> newRow){
-	if (!allTables[tableName].duplicateExists(newRow))
+	if (!allTables[tableName].duplicateExists(newRow)){
 		allTables[tableName].data.push_back(newRow);
-	else
+	}
+	else {
 		cout << "There is already an entry in the table with that key\n";
+	}
 }
 
 void Database::deleteFromTable(string tableName, ConditionNode condition)
@@ -97,11 +105,9 @@ void Database::deleteFromTable(string tableName, ConditionNode condition)
 	// Begin iterating from end so that removes don't change position of any data we have yet to look at.
 	vector<vector<Datum> >::iterator it;
 	it = allTables[tableName].data.end();
-	while (it != allTables[tableName].data.begin())
-	{
+	while (it != allTables[tableName].data.begin()) {
 		it--;
-		if (condition.eval(allTables[tableName].attributeNames, *it))
-		{
+		if (condition.eval(allTables[tableName].attributeNames, *it)) {
 			allTables[tableName].data.erase(it);
 		}
 	}
@@ -122,18 +128,18 @@ void Database::updateTable(string tableName, vector<string> attributeName, vecto
 	// Begin iterating from end so that removes don't change position of any data we have yet to look at.
 	vector<vector<Datum> >::iterator it;
 	it = allTables[tableName].data.end();
-	while (it != allTables[tableName].data.begin())
-	{
+	while (it != allTables[tableName].data.begin()) {
 		it--;
-		if (condition.eval(allTables[tableName].attributeNames, *it))
-		{
+		if (condition.eval(allTables[tableName].attributeNames, *it)) {
 			for (int j = 0; j<attrIndeces.size(); j++){
 				dupRow = *it;
 				dupRow[attrIndeces[j]] = newValue[j];
-				if (!allTables[tableName].duplicateExists(dupRow))
+				if (!allTables[tableName].duplicateExists(dupRow)){
 					(*it)[attrIndeces[j]] = newValue[j];
-				else
+				}
+				else {
 					cout << "That update would cause a conflict of primary keys\n";
+				}
 			}
 		}
 	}
@@ -146,11 +152,9 @@ Table Database::selectFromTable(string tableName, ConditionNode condition){
 	// Begin iterating from end so that removes don't change position of any data we have yet to look at.
 	vector<vector<Datum> >::iterator it;
 	it = allTables[tableName].data.end();
-	while (it != allTables[tableName].data.begin())
-	{
+	while (it != allTables[tableName].data.begin()) {
 		it--;
-		if (condition.eval(allTables[tableName].attributeNames, *it))
-		{
+		if (condition.eval(allTables[tableName].attributeNames, *it)) {
 			retTable.data.push_back(*it);
 		}
 	}
