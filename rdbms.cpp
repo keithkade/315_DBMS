@@ -183,6 +183,79 @@ Table Table::productWith(const Table& paramTable){
 	return productTable;
 }
 
+Table Table::naturalJoinWith(const Table& paramTable){
+
+	//indices that this table has in common with paramTable
+	vector<int> thisAttIndices;
+	//indices that paramTable has in common with this table
+	vector<int> paramAttIndices;
+	for (int param_index = 0; param_index < paramTable.attributeNames.size(); ++param_index){
+		for (int this_index = 0; this_index < data[0].size(); ++this_index){
+			if (paramTable.attributeNames[param_index] == attributeNames[this_index]){
+				thisAttIndices.push_back(this_index);
+				paramAttIndices.push_back(param_index);
+				//since we wont find another match (tables can't have attributes with the same name),
+				//we break the inside loop if we find a match
+				break;
+			}
+		}
+	}
+
+	//need to get all attribute names that will be in joined table
+	vector<string> combinedAttNames = attributeNames;
+
+	//get indices of attributes in paramTable that aren't in this table
+	//we need this so we can have all attributes from both tables (minus duplicates) for the join
+	vector<int> notCommonAtts;
+
+	//combinedAttNames has all names from this table,
+	//now add attributes from paramTable but skip duplicates
+	for (int i = 0; i < paramTable.attributeNames.size(); ++i){
+		if (find(combinedAttNames.begin(), combinedAttNames.end(), paramTable.attributeNames[i]) == combinedAttNames.end()){
+			//this means that combinedAttNames does not contain paramTable.attributesNames[i]
+			//which means we need to add paramTable.attributeNames[i] to combinedAttNames
+			combinedAttNames.push_back(paramTable.attributeNames[i]);
+
+			//it also means we need to add the index of the attribute name from paramTable
+			//to the notCommonAtts vector
+			notCommonAtts.push_back(i);
+		}
+	}
+
+	//now we can create a table with the combinedAttNames
+	//given the same keys as this table
+	Table joinedTable(combinedAttNames, keyNames);
+
+	//loop through this table data to find indices of matching rows
+	bool allCommonAttsEqual;
+	for (int this_row = 0; this_row < data.size(); ++this_row){
+		//loop through paramTable data to find indices of matching rows
+		for (int param_row = 0; param_row < paramTable.attributeNames.size(); ++param_row){
+			allCommonAttsEqual = true;
+			//loop through columns in data to compare attributes with same name for equality
+			for (int column = 0; column < thisAttIndices.size(); ++column) {
+				//check if equal on common attributes
+				if (data[this_row][thisAttIndices[column]] != paramTable.data[param_row][paramAttIndices[column]]){
+					allCommonAttsEqual = false;
+					break;
+				}
+			}
+
+			if (allCommonAttsEqual){
+				//need to create a new row for joinedTable
+				vector<Datum> newRow = data[this_row];
+				//now we just add the notCommonAtts from paramTable
+				for (int i = 0; i < notCommonAtts.size(); ++i){
+					newRow.push_back(paramTable.data[param_row][notCommonAtts[i]]);
+				}
+				joinedTable.data.push_back(newRow);
+			}
+		}
+	}
+
+	return joinedTable;
+}
+
 bool Table::duplicateExists(vector<Datum> newRow){
 	vector<int> keyIndices;
 	bool duplicateFound = false;
@@ -334,4 +407,14 @@ Table Database::setDifference(string tNameMinuend, string tNameSubtrahend){
 Table Database::crossProduct(string tableName1, string tableName2){
 	//allTables returns a table, jsut call productWith on those tables
 	return allTables[tableName1].productWith(allTables[tableName2]);
+}
+
+Table Database::naturalJoin(const string& tableName1, const string& tableName2){
+	//allTables returns a table, jsut call productWith on those tables
+	Table t;
+	return t;
+}
+
+Table Database::getTable(const string& tableName){
+	return allTables[tableName];
 }

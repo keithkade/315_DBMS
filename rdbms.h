@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <iterator>
+#include <algorithm>
 
 //conditional queries/commands are stored in a tree whose root is a ConditionNode
 class ConditionNode;
@@ -23,6 +24,7 @@ struct Datum{
 	bool operator!=(const Datum &d);
 	bool operator==(const Datum &d);
 };
+
 
 //each relation in the database is one Table object
 struct Table{
@@ -56,6 +58,9 @@ struct Table{
 	//return the cross product of two relations
 	Table productWith(const Table& paramTable);
 
+	//joins on the common attribute names of two tables and returns a new table
+	Table naturalJoinWith(const Table& paramTable);
+
 
 	//returns true if there is already a row with the the same primary key as the row argument
 	bool duplicateExists(std::vector<Datum> newRow);
@@ -63,6 +68,7 @@ struct Table{
 	//for testing and debugging
 	void printTable();
 };
+
 
 //the entire database is an object of this class
 class Database{
@@ -104,4 +110,9 @@ public:
 
 	//return the cross product of two relations
 	Table crossProduct(std::string tableName1, std::string tableName2);
+
+	//joins on the common attribute names of two tables and returns a new table
+	Table naturalJoin(const std::string& tableName1, const std::string& tableName2);
+
+	Table getTable(const std::string& tableName);
 };
