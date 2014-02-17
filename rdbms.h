@@ -63,7 +63,7 @@ struct Table{
 
 
 	//returns true if there is already a row with the the same primary key as the row argument
-	bool duplicateExists(std::vector<Datum> newRow);
+	bool duplicateExists(const std::vector<Datum>& newRow);
 
 	//for testing and debugging
 	void printTable();
@@ -79,37 +79,37 @@ public:
 	Database();
 
 	//create new relation in the database
-	void createTable(std::string tableName, std::vector<std::string> attrNames, std::vector<std::string> keys);
+	void createTable(const std::string& tableName, const std::vector<std::string>& attrNames, const std::vector<std::string>& keys);
 
 	//remove a table from the database
-	void dropTable(std::string tableName);
+	void dropTable(const std::string& tableName);
 
 	//make sure that there cannot be duplicate entities
-	void insertIntoTable(std::string tableName, std::vector<Datum> newRow);
+	void insertIntoTable(const std::string& tableName, const std::vector<Datum>& newRow);
 
 	//remove a row from the table that satisfies the condition tree passed
-	void deleteFromTable(std::string tableName, ConditionNode condition);
+	void deleteFromTable(const std::string& tableName, ConditionNode condition);
 
 	//changes the attributs in the table in the rows that satisfy the condition
-	void updateTable(std::string tableName, std::vector<std::string> attributeName, std::vector<Datum> newValue, ConditionNode condition);
+	void updateTable(const std::string& tableName, const std::vector<std::string>& attributeName, const std::vector<Datum>& newValue, ConditionNode condition);
 
 	//return a new relation that contains all rows that satisfy the condition
-	Table selectFromTable(std::string tableName, ConditionNode condition);
+	Table selectFromTable(const std::string& tableName, ConditionNode condition);
 
 	//return a subset of the attributes in the relation
-	Table projectFromTable(std::string tableName, std::vector<std::string> projectedNames);
+	Table projectFromTable(const std::string& tableName, const std::vector<std::string>& projectedNames);
 
 	//return a new table with the attributes names changed 
-	Table renameAttributes(std::string tableName, std::vector<std::string> renamedNames);
+	Table renameAttributes(const std::string& tableName, const std::vector<std::string>& renamedNames);
 
 	//return the union of two relations
-	Table setUnion(std::string tableName1, std::string tableName2);
+	Table setUnion(const std::string& tableName1, const std::string& tableName2);
 
 	//compute minuend - subtrahend = diference
-	Table setDifference(std::string tNameMinuend, std::string tNameSubtrahend);
+	Table setDifference(const std::string& tNameMinuend, const std::string& tNameSubtrahend);
 
 	//return the cross product of two relations
-	Table crossProduct(std::string tableName1, std::string tableName2);
+	Table crossProduct(const std::string& tableName1, const std::string& tableName2);
 
 	//joins on the common attribute names of two tables and returns a new table
 	Table naturalJoin(const std::string& tableName1, const std::string& tableName2);

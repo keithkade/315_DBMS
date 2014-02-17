@@ -256,7 +256,7 @@ Table Table::naturalJoinWith(const Table& paramTable){
 	return joinedTable;
 }
 
-bool Table::duplicateExists(vector<Datum> newRow){
+bool Table::duplicateExists(const vector<Datum>& newRow){
 	vector<int> keyIndices;
 	bool duplicateFound = false;
 	int conflictCounter = 0; //if it is the same as the number of keys there is a conflict
@@ -307,16 +307,16 @@ void Table::printTable(){
 
 Database::Database(){}
 
-void Database::createTable(string tableName, vector<string> attrNames, vector<string> keys){
+void Database::createTable(const string& tableName, const vector<string>& attrNames, const vector<string>& keys){
 	Table newTable(attrNames, keys);
 	allTables[tableName] = newTable;
 }
 
-void Database::dropTable(string tableName){
+void Database::dropTable(const string& tableName){
 	allTables.erase(tableName);
 }
 
-void Database::insertIntoTable(string tableName, vector<Datum> newRow){
+void Database::insertIntoTable(const string& tableName, const vector<Datum>& newRow){
 	if (!allTables[tableName].duplicateExists(newRow)){
 		allTables[tableName].data.push_back(newRow);
 	}
@@ -325,7 +325,7 @@ void Database::insertIntoTable(string tableName, vector<Datum> newRow){
 	}
 }
 
-void Database::deleteFromTable(string tableName, ConditionNode condition)
+void Database::deleteFromTable(const string& tableName, ConditionNode condition)
 {
 	// Begin iterating from end so that removes don't change position of any data we have yet to look at.
 	vector<vector<Datum> >::iterator it;
@@ -338,7 +338,7 @@ void Database::deleteFromTable(string tableName, ConditionNode condition)
 	}
 }
 
-void Database::updateTable(string tableName, vector<string> attributeName, vector<Datum> newValue, ConditionNode condition){
+void Database::updateTable(const string& tableName, const vector<string>& attributeName, const vector<Datum>& newValue, ConditionNode condition){
 
 	vector<Datum> dupRow; //to check for conflicts
 	vector<int> attrIndeces;
@@ -370,7 +370,7 @@ void Database::updateTable(string tableName, vector<string> attributeName, vecto
 	}
 }
 
-Table Database::selectFromTable(string tableName, ConditionNode condition){
+Table Database::selectFromTable(const string& tableName, ConditionNode condition){
 	Table retTable(allTables[tableName].attributeNames, allTables[tableName].keyNames);
 
 
@@ -386,25 +386,25 @@ Table Database::selectFromTable(string tableName, ConditionNode condition){
 	return retTable;
 }
 
-Table Database::projectFromTable(string tableName, vector<string> projectedNames){
+Table Database::projectFromTable(const string& tableName, const vector<string>& projectedNames){
 	return allTables[tableName].projectFromTable(projectedNames);
 }
 
-Table Database::renameAttributes(string tableName, vector<string> renamedNames){
+Table Database::renameAttributes(const string& tableName, const vector<string>& renamedNames){
 	return allTables[tableName].renameAttributes(renamedNames);
 }
 
-Table Database::setUnion(string tableName1, string tableName2){
+Table Database::setUnion(const string& tableName1, const string& tableName2){
 	//allTables returns a table, just call unionWith on those tables
 	return allTables[tableName1].unionWith(allTables[tableName2]);
 }
 
-Table Database::setDifference(string tNameMinuend, string tNameSubtrahend){
+Table Database::setDifference(const string& tNameMinuend, const string& tNameSubtrahend){
 	//allTables returns a table, jsut call differeneWith on those tables
 	return allTables[tNameMinuend].differenceWith(allTables[tNameMinuend]);
 }
 
-Table Database::crossProduct(string tableName1, string tableName2){
+Table Database::crossProduct(const string& tableName1, const string& tableName2){
 	//allTables returns a table, jsut call productWith on those tables
 	return allTables[tableName1].productWith(allTables[tableName2]);
 }
