@@ -7,6 +7,7 @@
 
 using namespace std;
 
+Parser::Parser(){}
 Parser::Parser(Database* db)
 {
 	rdbms = db;

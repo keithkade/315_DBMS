@@ -18,6 +18,7 @@ class Parser{
 	map<string, Table> tempTables; // Tables only kept while DML is runing. Deleted on finish.
 
 public:
+	Parser();
 	Parser(Database*);
 
 	//Returns a vecotr of strings that are the attribute names.
