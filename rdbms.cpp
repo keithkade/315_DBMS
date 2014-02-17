@@ -22,12 +22,166 @@ bool Datum::operator==(const Datum &d){
 }
 
 
+
 Table::Table(){}
 Table::Table(vector<string> attrNames, vector<string> keys){
 		keyNames = keys;
 		attributeNames = attrNames;
+}
+
+Table Table::projectFromTable(const vector<string>& projectedNames){
+	//table to return
+	Table projectedTable(projectedNames, keyNames);
+
+	//get the indices of the attributes to be projected
+	vector<int> attIndices;
+	for (int i = 0; i < projectedNames.size(); ++i){
+		for (int j = 0; j < data[0].size(); ++j){
+			if (projectedNames[i] == attributeNames[j]){
+				attIndices.push_back(j);
+				break;
+			}
+		}
 	}
 
+	//create rows to pushback into the new table
+	for (int row = 0; row < data.size(); ++row){
+		vector<Datum> newRow;
+		//keep only the projected columns
+		for (int column = 0; column < attIndices.size(); ++column){
+			Datum d(data[row][attIndices[column]]);
+			newRow.push_back(d);
+		}
+		projectedTable.data.push_back(newRow);
+	}
+
+	return projectedTable;
+}
+
+Table Table::renameAttributes(const vector<string>& renamedNames){
+	//create new table with new names
+	Table renamedTable(renamedNames, keyNames);
+	//now set new table's data equal to old table's data
+	renamedTable.data = data;
+	return renamedTable;
+}
+
+bool Table::unionCompatibleWith(const Table& compareTable){
+	vector<string> compareAttributes = compareTable.attributeNames;
+	//if different size then not union compatible
+	if (compareAttributes.size() != attributeNames.size()){
+		return false;
+	}
+	for (int i = 0; i < attributeNames.size(); ++i){
+		//if different names then not union compatible
+		if (compareAttributes[i] != attributeNames[i]){
+			return false;
+		}
+	}
+
+	return true;
+}
+
+Table Table::unionWith(const Table& paramTable){
+	Table unionTable(paramTable.attributeNames, paramTable.keyNames);
+	if (!unionCompatibleWith(paramTable)){
+		cout << "Unable to perform set union. Tables must be union compatible." << endl;
+		return unionTable;	//empty table
+	}
+
+	//inserting ALL rows from both tables into unionTable
+	for (int i = 0; i < data.size(); ++i){
+		unionTable.data.push_back(data[i]);
+	}
+	for (int i = 0; i < paramTable.data.size(); ++i){
+		unionTable.data.push_back(paramTable.data[i]);
+	}
+
+	//now remove duplicates from unionTable
+	//efficiency is not a concern in our system..
+	bool isDuplicate;
+	for (int row = 0; row < unionTable.data.size(); ++row){
+		//find duplicate rows
+		for (int dupRow = 0; dupRow < unionTable.data.size(); ++dupRow){
+			isDuplicate = true;
+			//compare individual rows
+			for (int col = 0; col < unionTable.data[0].size(); ++col){
+				if (unionTable.data[row][col] != unionTable.data[dupRow][col]){
+					isDuplicate = false;
+					break;
+				}
+			}
+			if (isDuplicate){
+				unionTable.data.erase(unionTable.data.begin() + dupRow);
+				//since vector resizes
+				--dupRow;
+			}
+		}
+	}
+
+	return unionTable;
+}
+
+Table Table::differenceWith(const Table& subtrahendTable){
+	//difference is the minuend (this) at the beginning
+	Table difference(attributeNames, keyNames);
+	difference.data = data;
+
+	if (!unionCompatibleWith(subtrahendTable)){
+		cout << "Unable to perform set difference. Tables must be union compatible." << endl;
+		return difference;	//empty table
+	}
+
+	//run through all elements to subtract
+	for (int sub = 0; sub < subtrahendTable.data.size(); ++sub){
+		//run through all elements being subtracted from
+		for (int dif = 0; dif < difference.data.size(); ++dif){
+			bool isEqual = true;
+			//compare rows and delete from difference if equal
+			for (int col = 0; col < difference.data[0].size(); ++col){
+				if (difference.data[dif][col] != subtrahendTable.data[sub][col]){
+					isEqual = false;
+					break;
+				}
+			}
+			if (isEqual){
+				difference.data.erase(difference.data.begin() + dif);
+				//since we assume no duplicates can be in table
+				break;
+			}
+		}
+	}
+
+	return difference;
+}
+
+Table Table::productWith(const Table& paramTable){
+	//make temp table for this table to make compution clearer
+	Table thisTable(attributeNames, keyNames);
+	thisTable.data = data;
+
+	//need to combine thisTable attributes with paramTable attributes..
+	vector<string> allAttributes = thisTable.attributeNames;
+	for (int i = 0; i < paramTable.attributeNames.size(); ++i){
+		allAttributes.push_back(paramTable.attributeNames[i]);
+	}
+	Table productTable(allAttributes, keyNames);
+
+	//compute cross product
+	for (int firstT = 0; firstT < thisTable.data.size(); ++firstT){
+		for (int secondT = 0; secondT < paramTable.data.size(); ++secondT){
+			//create newRow by combining thisTable and paramTable rows
+			vector<Datum> newRow = thisTable.data[firstT];
+			for (int col = 0; col < paramTable.data.size(); ++col){
+				newRow.push_back(paramTable.data[secondT][col]);
+			}
+
+			productTable.data.push_back(newRow);
+		}
+	}
+
+	return productTable;
+}
 
 bool Table::duplicateExists(vector<Datum> newRow){
 	vector<int> keyIndices;
@@ -55,7 +209,6 @@ bool Table::duplicateExists(vector<Datum> newRow){
 	}
 	return duplicateFound;
 }
-
 	
 void Table::printTable(){
 	for (int i = 0; i < attributeNames.size(); i++){
@@ -76,7 +229,6 @@ void Table::printTable(){
 	}
 	cout << endl;
 }
-
 
 
 
@@ -161,156 +313,25 @@ Table Database::selectFromTable(string tableName, ConditionNode condition){
 	return retTable;
 }
 
-Table Database::projectFromTable(string tableName, vector<string> attributeNames){
-	Table wholeTable = allTables[tableName];
-	Table projectionTable(attributeNames, allTables[tableName].keyNames);
-	//get indices in wholeTable of matching attributes
-	vector<int> attIndices;
-	for (int i = 0; i < attributeNames.size(); ++i){
-		for (int j = 0; j < wholeTable.data[0].size(); ++j){
-			if (attributeNames[i] == wholeTable.attributeNames[j]){
-				attIndices.push_back(j);
-				break;
-			}
-		}
-	}
-
-	for (int row = 0; row < wholeTable.data.size(); ++row){
-		vector<Datum> newRow;
-		for (int column = 0; column < attIndices.size(); ++column){
-			Datum d(wholeTable.data[row][attIndices[column]]);
-			newRow.push_back(d);
-		}
-		projectionTable.data.push_back(newRow);
-	}
-	return projectionTable;
+Table Database::projectFromTable(string tableName, vector<string> projectedNames){
+	return allTables[tableName].projectFromTable(projectedNames);
 }
 
-Table Database::renameAttributes(string tableName, vector<string> attributeNames){
-	Table newNamesTable = allTables[tableName];
-	newNamesTable.attributeNames = attributeNames;
-	return newNamesTable;
-}
-
-	//just see if two tables are union compatible(for setUnion and setDifference)
-bool Database::unionCompatible(string tableName1, string tableName2){
-	vector<string> atts1 = allTables[tableName1].attributeNames;
-	vector<string> atts2 = allTables[tableName2].attributeNames;
-	//if different size then not union compatible
-	if (atts1.size() != atts2.size()){
-		return false;
-	}
-	for (int i = 0; i < atts1.size(); ++i){
-		//if different names then not union compatible
-		if (atts1[i] != atts2[i]){
-			return false;
-		}
-	}
-	return true;
+Table Database::renameAttributes(string tableName, vector<string> renamedNames){
+	return allTables[tableName].renameAttributes(renamedNames);
 }
 
 Table Database::setUnion(string tableName1, string tableName2){
-	Table unionTable(allTables[tableName1].attributeNames, allTables[tableName1].keyNames);
-	if (!unionCompatible(tableName1, tableName2)){
-		cout << "Unable to perform set union on " << tableName1 << " and " << tableName2 << "." << endl;
-		return unionTable;	//empty table
-	}
-
-	//temp tables to make getting rows easier
-	Table t1 = allTables[tableName1];
-	Table t2 = allTables[tableName2];
-
-	//inserting ALL rows from both tables into unionTable
-	for (int i = 0; i < t1.data.size(); ++i){
-		unionTable.data.push_back(t1.data[i]);
-	}
-	for (int i = 0; i < t2.data.size(); ++i){
-		unionTable.data.push_back(t2.data[i]);
-	}
-
-	//now remove duplicates from unionTable
-	//efficiency is not a concern in our system..
-	for (int row = 0; row < unionTable.data.size(); ++row){
-		//find duplicate rows
-		for (int dupRow = 0; dupRow < unionTable.data.size(); ++dupRow){
-			bool isDuplicate = true;
-			//compare individual rows
-			for (int col = 0; col < unionTable.data[0].size(); ++col){
-				if (unionTable.data[row][col] != unionTable.data[dupRow][col]){
-					isDuplicate = false;
-					break;
-				}
-			}
-			if (isDuplicate){
-				unionTable.data.erase(unionTable.data.begin() + dupRow);
-				//since vector resizes
-				--dupRow;
-			}
-		}
-	}
-	return unionTable;
+	//allTables returns a table, just call unionWith on those tables
+	return allTables[tableName1].unionWith(allTables[tableName2]);
 }
 
-	//compute minuend - subtrahend = diference
 Table Database::setDifference(string tNameMinuend, string tNameSubtrahend){
-	//difference is the minuend at beginning
-	Table difference = allTables[tNameMinuend];
-	Table subtrahend = allTables[tNameSubtrahend];
-
-	if (!unionCompatible(tNameSubtrahend, tNameSubtrahend)){
-		cout << "Unable to perform set difference on " << tNameMinuend << " and " << tNameSubtrahend << "." << endl;
-		return difference;	//empty table
-	}
-
-	//run through all elements to subtract
-	for (int sub = 0; sub < subtrahend.data.size(); ++sub){
-		//run through all elements to subtract from
-		for (int dif = 0; dif < difference.data.size(); ++dif){
-			bool isEqual = true;
-			//compare rows and delete from difference if equal
-			for (int col = 0; col < difference.data[0].size(); ++col){
-				if (difference.data[dif][col] != subtrahend.data[sub][col]){
-					isEqual = false;
-					break;
-				}
-			}
-			if (isEqual){
-				difference.data.erase(difference.data.begin() + dif);
-				//since we assume no duplicates can be in table
-				break;
-			}
-		}
-	}
-
-	return difference;
+	//allTables returns a table, jsut call differeneWith on those tables
+	return allTables[tNameMinuend].differenceWith(allTables[tNameMinuend]);
 }
 
 Table Database::crossProduct(string tableName1, string tableName2){
-	//temp tables to make getting rows easier
-	Table t1 = allTables[tableName1];
-	Table t2 = allTables[tableName2];
-
-	//need to combine t1 attributes with t2 attributes..
-	vector<string> allAttributes = t1.attributeNames;
-	for (int i = 0; i < t2.attributeNames.size(); ++i){
-		allAttributes.push_back(t2.attributeNames[i]);
-	}
-	Table productTable(allAttributes, allTables[tableName1].keyNames);
-
-	//compute cross product
-	for (int firstT = 0; firstT < t1.data.size(); ++firstT){
-		for (int secondT = 0; secondT < t2.data.size(); ++secondT){
-			//create newRow by combining t1 and t2 rows
-			vector<Datum> newRow = t1.data[firstT];
-			for (int col = 0; col < t2.data.size(); ++col){
-				newRow.push_back(t2.data[secondT][col]);
-			}
-
-			productTable.data.push_back(newRow);
-		}
-	}
-
-	return productTable;
+	//allTables returns a table, jsut call productWith on those tables
+	return allTables[tableName1].productWith(allTables[tableName2]);
 }
-
-

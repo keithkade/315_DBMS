@@ -24,17 +24,39 @@ struct Datum{
 	bool operator==(const Datum &d);
 };
 
-//each relation in the table is one Table object
+//each relation in the database is one Table object
 struct Table{
 
 	std::vector<std::string> keyNames;			//contains all the attributes used as the primary key
 	std::vector<std::string> attributeNames;	//contains the names of all of our attributes
-	std::vector<std::vector<Datum> > data;		//the relation itself
+	std::vector<std::vector<Datum> > data;		//the relation data
 
 	//constructors
 	Table(std::vector<std::string> attrNames, std::vector<std::string> keys);
 	Table();
 	
+
+	/***relational algebra operations***/
+
+	//return a subset of the attributes in the relation
+	Table projectFromTable(const std::vector<std::string>& projectedNames);
+
+	//return a new table with same data but different attribute names
+	Table renameAttributes(const std::vector<std::string>& renamedNames);
+
+	//just see if two tables are union compatible(for setUnion and setDifference)
+	bool unionCompatibleWith(const Table& paramTable);
+
+	//return the union of two relations
+	Table unionWith(const Table& unionTable);
+
+	//compute minuend - subtrahend = diference
+	Table differenceWith(const Table& subtrahendTable);
+
+	//return the cross product of two relations
+	Table productWith(const Table& paramTable);
+
+
 	//returns true if there is already a row with the the same primary key as the row argument
 	bool duplicateExists(std::vector<Datum> newRow);
 
@@ -69,13 +91,10 @@ public:
 	Table selectFromTable(std::string tableName, ConditionNode condition);
 
 	//return a subset of the attributes in the relation
-	Table projectFromTable(std::string tableName, std::vector<std::string> attributeNames);
+	Table projectFromTable(std::string tableName, std::vector<std::string> projectedNames);
 
-	//returna new table with the attributes names changed 
-	Table renameAttributes(std::string tableName, std::vector<std::string> attributeNames);
-
-	//just see if two tables are union compatible(for setUnion and setDifference)
-	bool unionCompatible(std::string tableName1, std::string tableName2);
+	//return a new table with the attributes names changed 
+	Table renameAttributes(std::string tableName, std::vector<std::string> renamedNames);
 
 	//return the union of two relations
 	Table setUnion(std::string tableName1, std::string tableName2);
