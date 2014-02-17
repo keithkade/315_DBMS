@@ -88,7 +88,7 @@ vector<Token> afterAssignQueryLex(string line){
 				makeCommVarTok(afterRetVecter, curString);
 			}
 			curString = "";
-			Token commaTok(Token::tokenType::SYMBOL);
+			Token commaTok(Token::tokenType::COMMA);
 			commaTok.content = ',';
 			afterRetVecter.push_back(commaTok);
 		}

@@ -8,14 +8,18 @@ using namespace std;
 struct Datum;
 struct Token;
 struct Table;
+class Database;
 class ConditionNode;
 class ConjunctionNode;
 class ComparisonNode;
 
 class Parser{
+	Database* rdbms;
 	map<string, Table> tempTables; // Tables only kept while DML is runing. Deleted on finish.
 
 public:
+	Parser(Database*);
+
 	//Returns a vecotr of strings that are the attribute names.
 	//Returns an empty vector if failed.
 	vector<string> attributeList(vector<Token>&);
@@ -33,7 +37,7 @@ public:
 	Table product(vector<Token>&);
 	Table naturalJoin(vector<Token>&);
 
-	void query(vector<Table>&);
+	void query(vector<Token>&);
 	void open(vector<Token>&);
 	void close(vector<Token>&);
 	void write(vector<Token>&);
