@@ -142,38 +142,6 @@ void Parser::closeRelationFile(const string& relationName)
 		relationFile << insertCmd << endl;
 	}
 }
-/*
-int main()
-{
-	//tests for file I/O
-	Database db;
-	vector<string> attNames;
-	attNames.push_back("artist");
-	attNames.push_back("year");
-	attNames.push_back("work");
-	attNames.push_back("birth");
-	vector<string> keys;
-	keys.push_back("artist");
-	keys.push_back("year");
-	db.createTable("RyanTestTable", attNames, keys);
-	vector<Datum> datums;
-	Datum famousGuy("famous guy");
-	Datum year(1999);
-	Datum artisticThingie("artisticThingie");
-	Datum date("10/10/1010");
-	datums.push_back(famousGuy);
-	datums.push_back(year);
-	datums.push_back(artisticThingie);
-	datums.push_back(date);
-	db.insertIntoTable("RyanTestTable", datums);
-	Parser p(&db);
-	p.closeRelationFile("RyanTestTable");
-
-	getchar();
-
-}
-*/
-
 
 vector<string> Parser::attributeList(vector<Token>& tokens)
 {
@@ -747,7 +715,7 @@ void Parser::query(vector<Token>& tokens)
 {
 	vector<Token>::iterator iter = tokens.begin();
 	string queryTableName = iter->content;
-
+	
 	vector<Token> exprTokens;
 	iter = iter + 2;
 	while (iter != tokens.end())
@@ -757,36 +725,25 @@ void Parser::query(vector<Token>& tokens)
 	}
 
 	Table resultTable = expression(exprTokens);
-	// If it == the default table that means somewhere we failed to find the table. 
-	// And therefore there was an error parsing the function.
-	if (resultTable == Table()) 
-	{
-		cout << "Parsing Error!\n";
-	}
-	else{
-		tempTables.insert(pair<string, Table>(queryTableName, resultTable));
-	}
+	tempTables.insert(pair<string, Table>(queryTableName, resultTable));
 }
 
 // Needs to be finished
 void Parser::open(vector<Token>& tokens)
 {
 	string tableName = tokens[1].content;
-	openRelationFile(tableName);
 }
 
 // Needs to be finished
 void Parser::close(vector<Token>& tokens)
 {
 	string tableName = tokens[1].content;
-	writeRelationToFile(tableName);
 }
 
 // Needs to be finished
 void Parser::write(vector<Token>& tokens)
 {
 	string tableName = tokens[1].content;
-	closeRelationFile(tableName);
 }
 
 void Parser::show(vector<Token>& tokens)
@@ -800,16 +757,7 @@ void Parser::show(vector<Token>& tokens)
 	}
 
 	Table resultTable = atomExpression(atomExprTokens);
-
-	// If it == the default table that means somewhere we failed to find the table. 
-	// And therefore there was an error parsing the function.
-	if (resultTable == Table())
-	{
-		cout << "Parsing Error!\n";
-	}
-	else{
-		resultTable.printTable();
-	}
+	resultTable.printTable();
 }
 
 void Parser::create(vector<Token>& tokens)
@@ -847,7 +795,7 @@ void Parser::create(vector<Token>& tokens)
 
 	vector<string> typedAtribs = typedAttributeList(typedAtribTokens);
 	vector<string> primaryKeys = attributeList(atribTokens);
-	
+
 	rdbms->createTable(tableName, typedAtribs, primaryKeys);
 }
 
@@ -957,11 +905,7 @@ void Parser::myDelete(vector<Token>& tokens)
 
 void Parser::command(vector<Token>& tokens)
 {
-	if (tokens.size() == 0)
-	{
-		cout << "Input Error. \n";
-	}
-	else if (tokens[0].content.compare("OPEN"))
+	if (tokens[0].content.compare("OPEN"))
 	{
 		open(tokens);
 	}
@@ -996,8 +940,5 @@ void Parser::command(vector<Token>& tokens)
 	else if (tokens[1].content.compare("<-"))
 	{
 		query(tokens);
-	}
-	else{
-		cout << "Input Error";
 	}
 }
