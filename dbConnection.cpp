@@ -16,14 +16,14 @@ void DBConnection::cmdLineInterface()
 {
 	vector<Token> tokens;
 	string command = "";
-	cout << "Type a DML command.\nUse 'exit' or 'quit' to terminate." << endl;
+	cout << "Type a DML command.\nUse 'EXIT' to close." << endl;
 	
 	//get first command
 	cout << "DML-Interface$ ";
 	cin >> command;
 
 	//iteratively get, lex, parse, and execute commands on the database
-	while(command != "exit" && command != "quit")
+	while(command != "EXIT")
 	{
 		//fill vector of tokens with lexed command
 		tokens = lexInputLine(command);
@@ -52,9 +52,11 @@ Table DBConnection::getTempTable(const string& tableName)
 {
 	return par.getTempTable(tableName);
 }
-
+/*
 int main()
 {
 	DBConnection dbc;
 	dbc.cmdLineInterface();
 }
+*/
+

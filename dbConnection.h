@@ -1,10 +1,8 @@
 #pragma once
 
+#include <string>
 
-//remove anything that isn't needed
-struct Datum;
-struct Token;
-struct Table;
+
 class Database;
 class Parser;
 
@@ -31,3 +29,4 @@ public:
 	Table getTempTable(const std::string& tableName);
 
 };
+
