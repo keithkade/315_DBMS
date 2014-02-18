@@ -13,6 +13,12 @@ Parser::Parser(Database* db)
 	rdbms = db;
 }
 
+void Parser::setDatabasePtr(Database* dbPtr)
+{
+	rdbms = dbPtr;
+}
+
+
 // Not complete need info on what to do with errors
 vector<string> Parser::attributeList(vector<Token>& tokens)
 {
@@ -24,7 +30,8 @@ vector<string> Parser::attributeList(vector<Token>& tokens)
 		{
 			attributes.push_back(iter->content);
 		}
-		else{
+		else
+		{
 			//error
 		}
 
@@ -41,7 +48,8 @@ vector<string> Parser::attributeList(vector<Token>& tokens)
 				//error
 			}
 		}
-		else{
+		else
+		{
 			return attributes;
 		}
 	}

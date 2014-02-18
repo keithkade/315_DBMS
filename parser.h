@@ -21,6 +21,9 @@ public:
 	Parser();
 	Parser(Database*);
 
+	//set the parser's database pointer
+	void setDatabasePtr(Database* dbPtr);
+
 	//Returns a vecotr of strings that are the attribute names.
 	//Returns an empty vector if failed.
 	vector<string> attributeList(vector<Token>&);

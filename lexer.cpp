@@ -435,25 +435,23 @@ vector<vector<Token> > lexFile(string fileName){
 }
 
 //lex a single command or query
-vector<vector<Token> > lexInputLine(string inputLine){
-	vector<vector<Token>> lexedInput;
-	vector<Token> lexedRow;
+vector<Token> lexInputLine(string inputLine){
+	vector<Token> lexedInput;
 
 	if (inputLine.find("<-") != std::string::npos){
-		lexedRow = queryLex(inputLine);
-		for (int i = 0; i < lexedRow.size(); i++){
-			cout << "'" << lexedRow[i].content << "' ";
+		lexedInput = queryLex(inputLine);
+		for (int i = 0; i < lexedInput.size(); i++){
+			cout << "'" << lexedInput[i].content << "' ";
 		}
 		cout << endl << endl;
 	}
 	else{
-		lexedRow = commandLex(inputLine);
-		for (int i = 0; i < lexedRow.size(); i++){
-			cout << "'" << lexedRow[i].content << "' ";
+		lexedInput = commandLex(inputLine);
+		for (int i = 0; i < lexedInput.size(); i++){
+			cout << "'" << lexedInput[i].content << "' ";
 		}
 		cout << endl << endl;
 	}
-	lexedInput.push_back(lexedRow);
 	
 	return lexedInput;
 }
