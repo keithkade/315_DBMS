@@ -7,7 +7,6 @@
 
 using namespace std;
 
-// "//error" left where error checking is made needs to be filled out
 Parser::Parser(){}
 
 Parser::Parser(Database* db)
@@ -42,7 +41,6 @@ vector<string> Parser::attributeList(vector<Token>& tokens)
 	}
 }
 
-// Not compelte need to know how dealing with types
 vector<string> Parser::typedAttributeList(vector<Token>& tokens)
 {
 	vector<string> attributes;
@@ -154,24 +152,34 @@ ComparisonNode* Parser::comparison(vector<Token>& tokens)
 
 ConjunctionNode* Parser::conjunction(vector<Token>& tokens)
 {
+	int parenDepth = 0;
 	vector<ComparisonNode*> compNodes;
+	vector<Token> subset;
 	vector<Token>::iterator iter = tokens.begin();
-	while (iter == tokens.end())
+	while (iter != tokens.end())
 	{
-		vector<Token> subset;
-		if (iter->content.compare("&&") != 0)
+		if (iter->type == Token::OPENPAREN)
 		{
-			subset.push_back(*iter);
+			parenDepth++;
 		}
-		
-		if (iter->content.compare("&&") == 0 || (iter + 1) == tokens.end())
+		else if (iter->type == Token::CLOSEPAREN)
+		{
+			parenDepth--;
+		}
+
+		if ((parenDepth == 0) && (iter->content.compare("||") == 0))
 		{
 			ComparisonNode* tempNode = comparison(subset);
 			compNodes.push_back(tempNode);
 			subset.clear();
 		}
+		else{
+			subset.push_back(*iter);
+		}
 		iter++;
 	}
+	ComparisonNode* tempNode = comparison(subset);
+	compNodes.push_back(tempNode);
 
 	ConjunctionNode* conjNode = new ConjunctionNode(compNodes);
 	return conjNode;
@@ -181,23 +189,32 @@ ConditionNode* Parser::condition(vector<Token>& tokens)
 {
 	int parenDepth = 0;
 	vector<ConjunctionNode*> conjNodes;
+	vector<Token> subset;
 	vector<Token>::iterator iter = tokens.begin();
-	while (iter == tokens.end())
+	while (iter != tokens.end())
 	{
-		vector<Token> subset;
-		if (iter->content.compare("||") != 0)
+		if (iter->type == Token::OPENPAREN)
 		{
-			subset.push_back(*iter);
+			parenDepth++;
+		}
+		else if (iter->type == Token::CLOSEPAREN)
+		{
+			parenDepth--;
 		}
 
-		if (iter->content.compare("||") == 0 || (iter + 1) == tokens.end())
+		if ((parenDepth == 0) && (iter->content.compare("||") == 0))
 		{
 			ConjunctionNode* tempNode = conjunction(subset);
 			conjNodes.push_back(tempNode);
 			subset.clear();
 		}
+		else{
+			subset.push_back(*iter); 
+		}
 		iter++;
 	}
+	ConjunctionNode* tempNode = conjunction(subset);
+	conjNodes.push_back(tempNode);
 
 	ConditionNode* condNode = new ConditionNode(conjNodes);
 	return condNode;
@@ -282,7 +299,14 @@ Table Parser::atomExpression(vector<Token>& tokens)
 	else{
 		if (tokens.size() == 1)
 		{
-			// get table using tokens[0]	
+			map<string,Table>::iterator curTableIt = tempTables.find(tokens[0].content);
+			if (curTableIt != tempTables.end())
+			{
+				return curTableIt->second;
+			}
+			else{
+				return rdbms->getTable(tokens[0].content);
+			}
 		}
 	}
 }
@@ -583,19 +607,19 @@ void Parser::query(vector<Token>& tokens)
 // Needs to be finished
 void Parser::open(vector<Token>& tokens)
 {
-	string queryTableName = tokens[1].content;
+	string tableName = tokens[1].content;
 }
 
 // Needs to be finished
 void Parser::close(vector<Token>& tokens)
 {
-	string queryTableName = tokens[1].content;
+	string tableName = tokens[1].content;
 }
 
 // Needs to be finished
 void Parser::write(vector<Token>& tokens)
 {
-	string queryTableName = tokens[1].content;
+	string tableName = tokens[1].content;
 }
 
 void Parser::show(vector<Token>& tokens)
@@ -755,12 +779,6 @@ void Parser::myDelete(vector<Token>& tokens)
 	rdbms->deleteFromTable(tableName, *cond);
 }
 
-// Needs to be finished
-void Parser::exit()
-{
-
-}
-
 void Parser::command(vector<Token>& tokens)
 {
 	if (tokens[0].content.compare("OPEN"))
@@ -774,10 +792,6 @@ void Parser::command(vector<Token>& tokens)
 	else if (tokens[0].content.compare("WRITE"))
 	{
 		write(tokens);
-	}
-	else if(tokens[0].content.compare("EXIT"))
-	{
-		exit();
 	}
 	else if(tokens[0].content.compare("SHOW"))
 	{
