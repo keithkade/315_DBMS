@@ -22,10 +22,6 @@ void Parser::setDatabasePtr(Database* dbPtr)
 
 Table Parser::getTempTable(const string& tableName)
 {
-	if (tableName == "")
-	{
-		return tempTables[lastInsertedTableName];
-	}
 	return tempTables[tableName];
 }
 
