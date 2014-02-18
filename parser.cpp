@@ -4,6 +4,7 @@
 #include "lexer.h"
 #include "rdbms.h"
 #include <sstream> //for turning string to int
+#include <fstream>	//for file I/O
 
 using namespace std;
 
@@ -18,6 +19,166 @@ void Parser::setDatabasePtr(Database* dbPtr)
 {
 	rdbms = dbPtr;
 }
+
+Table Parser::getTempTable(const string& tableName)
+{
+	if (tableName == "")
+	{
+		return tempTables[lastInsertedTableName];
+	}
+	return tempTables[tableName];
+}
+
+void Parser::openRelationFile(const string& relationName)
+{
+	vector<Token> tokens;
+	string command;
+	ifstream relationFile(relationName + ".db");
+	while (getline(relationFile, command))
+	{
+		tokens = lexInputLine(command);
+		//will uncomment once command is implemented for parser
+		//command(tokens);
+	}
+}
+
+void Parser::writeRelationToFile(const string& relationName)
+{
+	ofstream newFile(relationName + ".db");
+}
+
+void Parser::closeRelationFile(const string& relationName)
+{
+	ofstream relationFile(relationName + ".db");
+	Table t = rdbms->getTable(relationName);
+
+	vector<Datum> typeSample;
+	//need to get types of Datum's in table to construct CREATE command
+	if (t.data.size() > 0)
+	{
+		 typeSample = t.data[0];
+	}
+	else 
+	{
+		cout << "No data to save. Save failed." << endl;
+		return;
+	}
+
+	vector<string> types;
+	for (int i = 0; i < typeSample.size(); ++i)
+	{
+		//indicating this Datum is a string
+		if (typeSample[i].numData == -999)
+		{
+			types.push_back("VARCHAR(20)");
+		}
+		else
+		{
+			types.push_back("INTEGER");
+		}
+	}
+
+	//construct the CREATE command
+	string createCmd = "CREATE TABLE " + relationName + " (";
+	for (int i = 0; i < types.size(); ++i)
+	{
+		createCmd += t.attributeNames[i] + " " + types[i];
+		if (i + 1 < types.size())
+		{
+			//need to add a comma
+			createCmd += ", ";
+		}
+		else
+		{
+			//need to add a parenthesis and pk info
+			createCmd += ") PRIMARY KEY (";
+			//loop through and add keynames to command
+			for (int j = 0; j < t.keyNames.size(); ++j)
+			{
+				createCmd += t.keyNames[j];
+				if (j + 1 < t.keyNames.size())
+				{
+					//need to add a comma
+					createCmd += ", ";
+				}
+				else
+				{
+					//need to add closing parenthesis
+					createCmd += ");";
+				}
+			}
+		}
+	}
+
+	//add to file
+	relationFile << createCmd << endl;
+
+	//construct instert commands
+	string insertCmd = "";
+	//loop through rows in relation data
+	for (int row = 0; row < t.data.size(); ++row)
+	{
+		insertCmd = "INSERT INTO " + relationName + " VALUES FROM (";
+		//loop through columns in relation data
+		for (int column = 0; column < t.attributeNames.size(); ++column)
+		{
+			if (t.data[row][column].numData == -999)
+			{
+				//dealing with string data
+				insertCmd += "\"" + t.data[row][column].stringData + "\"";
+			}
+			else
+			{
+				//dealing with int data
+				insertCmd += to_string(t.data[row][column].numData);
+			}
+
+			//determine if need to add comma
+			if (column + 1 < t.attributeNames.size())
+			{
+				insertCmd += ", ";
+			}
+			else
+			{
+				//need to add closing parenthesis
+				insertCmd += ");";
+			}
+		}
+		relationFile << insertCmd << endl;
+	}
+}
+
+int main()
+{
+	//tests for file I/O
+	Database db;
+	vector<string> attNames;
+	attNames.push_back("artist");
+	attNames.push_back("year");
+	attNames.push_back("work");
+	attNames.push_back("birth");
+	vector<string> keys;
+	keys.push_back("artist");
+	keys.push_back("year");
+	db.createTable("RyanTestTable", attNames, keys);
+	vector<Datum> datums;
+	Datum famousGuy("famous guy");
+	Datum year(1999);
+	Datum artisticThingie("artisticThingie");
+	Datum date("10/10/1010");
+	datums.push_back(famousGuy);
+	datums.push_back(year);
+	datums.push_back(artisticThingie);
+	datums.push_back(date);
+	db.insertIntoTable("RyanTestTable", datums);
+	Parser p(&db);
+	p.closeRelationFile("RyanTestTable");
+
+	getchar();
+
+}
+
+
 
 vector<string> Parser::attributeList(vector<Token>& tokens)
 {
