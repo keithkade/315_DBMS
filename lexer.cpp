@@ -42,6 +42,7 @@ void makeCommVarTok(vector<Token> & afterRetVecter, string in){
 //lex the possibly nested protion of a query
 vector<Token> afterAssignQueryLex(string line){
 	vector<Token> afterRetVecter;
+	vector<Token> emptyRetVecter; //this is returned on bad input. The parser then recognizes this. 
 	
 	string curString=""; //contents of token accumulate on this
 	int stringPos=0; //current position in string
@@ -133,7 +134,7 @@ vector<Token> afterAssignQueryLex(string line){
 			}
 			else {
 				cout << "ERROR when parsing a <" << endl;
-				break;
+				return emptyRetVecter;
 			}
 			stringPos++; //skip over next char since we have accounted for it
 		}
@@ -154,12 +155,10 @@ vector<Token> afterAssignQueryLex(string line){
 			}
 			else {
 				cout << "ERROR when parsing a >" << endl;
-				break;
+				return emptyRetVecter;
 			}
 			stringPos++; //skip over next char since we have accounted for it
 		}
-
-
 
 		else if (curChar == '='){
 			makeCommVarTok(afterRetVecter, curString);
@@ -171,7 +170,7 @@ vector<Token> afterAssignQueryLex(string line){
 			}
 			else {
 				cout << "ERROR when parsing a =" << endl;
-				break;
+				return emptyRetVecter;
 			}
 			stringPos++; //skip over next char since we have accounted for it
 		}
