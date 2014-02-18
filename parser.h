@@ -16,8 +16,6 @@ class ComparisonNode;
 class Parser{
 	Database* rdbms; // Copy of the current database being worked on.
 	map<string, Table> tempTables; // Tables only kept while DML is runing. Deleted on finish.
-	// whenever inserting new temp table into map, store name here so it can be accessed after the command
-	string lastInsertedTableName;
 
 	//Returns a vector of strings that are the attribute names.
 	vector<string> attributeList(vector<Token>&);
@@ -68,7 +66,15 @@ class Parser{
 	void insert(vector<Token>&);
 	// Calls the Database*'s delete in order to remove attributes from a table.
 	void myDelete(vector<Token>&);
-
+	
+	//open table from relation.db file and load it into database (executing the OPEN command)
+	void openRelationFile(const std::string& relationName);
+	//to create a new, empty relation file. WARNING: running this function on an existing relation will whipe the .db file
+	void writeRelationToFile(const std::string& relationName);
+	//"To save all changes to the relation in a database file and close, use the CLOSE command"
+	//the above is quoted from project description, but since EXIT close the DML,
+	//this simply saves the current state of a relation in a .db file so it can be reconstructed later
+	 void closeRelationFile(const std::string& relationName);
 
 public:
 	//Constructors.
@@ -81,16 +87,7 @@ public:
 	//return one of the temp tables stored within the parser
 	Table getTempTable(const std::string& tableName);
 
-	//open table from relation.db file and load it into database (executing the OPEN command)
-	void openRelationFile(const std::string& relationName);
 
-	//to create a new, empty relation file. WARNING: running this function on an existing relation will whipe the .db file
-	void writeRelationToFile(const std::string& relationName);
-
-	//"To save all changes to the relation in a database file and close, use the CLOSE command"
-	//the above is quoted from project description, but since EXIT close the DML,
-	//this simply saves the current state of a relation in a .db file so it can be reconstructed later
-	 void closeRelationFile(const std::string& relationName);
 
 	// Called on any line of code that follows the language set by our grammar.
 	// Querys are treated as seperate command.

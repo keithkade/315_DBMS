@@ -142,7 +142,7 @@ void Parser::closeRelationFile(const string& relationName)
 		relationFile << insertCmd << endl;
 	}
 }
-
+/*
 int main()
 {
 	//tests for file I/O
@@ -172,7 +172,7 @@ int main()
 	getchar();
 
 }
-
+*/
 
 
 vector<string> Parser::attributeList(vector<Token>& tokens)
@@ -764,18 +764,21 @@ void Parser::query(vector<Token>& tokens)
 void Parser::open(vector<Token>& tokens)
 {
 	string tableName = tokens[1].content;
+	openRelationFile(tableName);
 }
 
 // Needs to be finished
 void Parser::close(vector<Token>& tokens)
 {
 	string tableName = tokens[1].content;
+	writeRelationToFile(tableName);
 }
 
 // Needs to be finished
 void Parser::write(vector<Token>& tokens)
 {
 	string tableName = tokens[1].content;
+	closeRelationFile(tableName);
 }
 
 void Parser::show(vector<Token>& tokens)
