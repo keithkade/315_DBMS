@@ -747,7 +747,7 @@ void Parser::query(vector<Token>& tokens)
 {
 	vector<Token>::iterator iter = tokens.begin();
 	string queryTableName = iter->content;
-	
+
 	vector<Token> exprTokens;
 	iter = iter + 2;
 	while (iter != tokens.end())
@@ -757,7 +757,15 @@ void Parser::query(vector<Token>& tokens)
 	}
 
 	Table resultTable = expression(exprTokens);
-	tempTables.insert(pair<string, Table>(queryTableName, resultTable));
+	// If it == the default table that means somewhere we failed to find the table. 
+	// And therefore there was an error parsing the function.
+	if (resultTable == Table()) 
+	{
+		cout << "Parsing Error!\n";
+	}
+	else{
+		tempTables.insert(pair<string, Table>(queryTableName, resultTable));
+	}
 }
 
 // Needs to be finished
@@ -792,7 +800,16 @@ void Parser::show(vector<Token>& tokens)
 	}
 
 	Table resultTable = atomExpression(atomExprTokens);
-	resultTable.printTable();
+
+	// If it == the default table that means somewhere we failed to find the table. 
+	// And therefore there was an error parsing the function.
+	if (resultTable == Table())
+	{
+		cout << "Parsing Error!\n";
+	}
+	else{
+		resultTable.printTable();
+	}
 }
 
 void Parser::create(vector<Token>& tokens)
@@ -830,7 +847,7 @@ void Parser::create(vector<Token>& tokens)
 
 	vector<string> typedAtribs = typedAttributeList(typedAtribTokens);
 	vector<string> primaryKeys = attributeList(atribTokens);
-
+	
 	rdbms->createTable(tableName, typedAtribs, primaryKeys);
 }
 
@@ -940,7 +957,11 @@ void Parser::myDelete(vector<Token>& tokens)
 
 void Parser::command(vector<Token>& tokens)
 {
-	if (tokens[0].content.compare("OPEN"))
+	if (tokens.size() == 0)
+	{
+		cout << "Input Error. \n";
+	}
+	else if (tokens[0].content.compare("OPEN"))
 	{
 		open(tokens);
 	}
@@ -975,5 +996,8 @@ void Parser::command(vector<Token>& tokens)
 	else if (tokens[1].content.compare("<-"))
 	{
 		query(tokens);
+	}
+	else{
+		cout << "Input Error";
 	}
 }

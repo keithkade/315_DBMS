@@ -35,8 +35,10 @@ struct Table{
 
 	//constructors
 	Table(std::vector<std::string> attrNames, std::vector<std::string> keys);
-	Table();
+	Table(); // Blank tables will be input failures.
 	
+	//needed to compare if Table is a bad table. 
+	bool operator==(const Table &t);
 
 	/***relational algebra operations***/
 

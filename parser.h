@@ -87,8 +87,6 @@ public:
 	//return one of the temp tables stored within the parser
 	Table getTempTable(const std::string& tableName);
 
-
-
 	// Called on any line of code that follows the language set by our grammar.
 	// Querys are treated as seperate command.
 	void command(vector<Token>&);

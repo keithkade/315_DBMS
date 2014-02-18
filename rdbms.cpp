@@ -29,6 +29,11 @@ Table::Table(vector<string> attrNames, vector<string> keys){
 		attributeNames = attrNames;
 }
 
+bool Table::operator==(const Table &t)
+{
+	return attributeNames == t.attributeNames;
+}
+
 Table Table::projectFromTable(const vector<string>& projectedNames){
 	//table to return
 	Table projectedTable(projectedNames, keyNames);
