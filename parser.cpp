@@ -18,6 +18,15 @@ void Parser::setDatabasePtr(Database* dbPtr)
 	rdbms = dbPtr;
 }
 
+Table Parser::getTempTable(const string& tableName)
+{
+	if (tableName == "")
+	{
+		return tempTables[lastInsertedTableName];
+	}
+	return tempTables[tableName];
+}
+
 
 // Not complete need info on what to do with errors
 vector<string> Parser::attributeList(vector<Token>& tokens)

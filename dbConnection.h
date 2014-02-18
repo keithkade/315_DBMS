@@ -20,5 +20,14 @@ public:
 
 	DBConnection();
 
+	//function to handle the command line interface for the DML
+	void cmdLineInterface();
+
+	//used to execute a command on the database from within a user application
+	void executeCommand(std::string command);
+
+	//get a table from the parser temp table vector
+	//if tableName == "" then the last table inserted will be returned
+	Table getTempTable(const std::string& tableName);
 
 };

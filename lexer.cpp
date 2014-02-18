@@ -456,8 +456,10 @@ vector<Token> lexInputLine(string inputLine){
 	return lexedInput;
 }
 
+/*
 int main(){
 	lexFile("parser_milestone_good_inputs.txt");
 	int n;
 	cin >> n;
 }
+*/

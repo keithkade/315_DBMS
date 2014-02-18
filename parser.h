@@ -15,7 +15,9 @@ class ComparisonNode;
 
 class Parser{
 	Database* rdbms;
-	map<string, Table> tempTables; // Tables only kept while DML is runing. Deleted on finish.
+	map<string, Table> tempTables;	// Tables only kept while DML is runing. Deleted on finish.
+	// whenever inserting new temp table into map, store name here so it can be accessed after the command
+	string lastInsertedTableName;
 
 public:
 	Parser();
@@ -24,7 +26,11 @@ public:
 	//set the parser's database pointer
 	void setDatabasePtr(Database* dbPtr);
 
-	//Returns a vecotr of strings that are the attribute names.
+	//return one of the temp table stored within the parser
+	//if tableName == "" then the last inserted table will be returned
+	Table getTempTable(const std::string& tableName);
+
+	//Returns a vector of strings that are the attribute names.
 	//Returns an empty vector if failed.
 	vector<string> attributeList(vector<Token>&);
 
