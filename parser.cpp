@@ -37,8 +37,7 @@ void Parser::openRelationFile(const string& relationName)
 	while (getline(relationFile, command))
 	{
 		tokens = lexInputLine(command);
-		//will uncomment once command is implemented for parser
-		//command(tokens);
+		Parser::command(tokens);
 	}
 }
 

@@ -256,6 +256,22 @@ Table Table::naturalJoinWith(const Table& paramTable){
 	return joinedTable;
 }
 
+Table Table::selectFromTable(Table selectTable, ConditionNode condition){
+	Table retTable(selectTable.attributeNames, selectTable.keyNames);
+
+
+	// Begin iterating from end so that removes don't change position of any data we have yet to look at.
+	vector<vector<Datum> >::iterator it;
+	it = selectTable.data.end();
+	while (it != selectTable.data.begin()) {
+		it--;
+		if (condition.eval(selectTable.attributeNames, *it)) {
+			retTable.data.push_back(*it);
+		}
+	}
+	return retTable;
+}
+
 bool Table::duplicateExists(const vector<Datum>& newRow){
 	vector<int> keyIndices;
 	bool duplicateFound = false;

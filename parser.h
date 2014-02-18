@@ -79,7 +79,6 @@ public:
 	void setDatabasePtr(Database* dbPtr);
 
 	//return one of the temp tables stored within the parser
-	//if tableName == "" then the last inserted table will be returned
 	Table getTempTable(const std::string& tableName);
 
 	//open table from relation.db file and load it into database (executing the OPEN command)

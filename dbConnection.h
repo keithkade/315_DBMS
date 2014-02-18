@@ -25,7 +25,6 @@ public:
 	void executeCommand(std::string command);
 
 	//get a table from the parser temp table vector
-	//if tableName == "" then the last table inserted will be returned
 	Table getTempTable(const std::string& tableName);
 
 };

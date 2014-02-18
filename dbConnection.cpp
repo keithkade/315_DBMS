@@ -29,8 +29,7 @@ void DBConnection::cmdLineInterface()
 		tokens = lexInputLine(command);
 
 		//parse command
-		//need to uncomment once command is implemented in the parser class
-		//par.command(tokens);
+		par.command(tokens);
 
 		command = "";
 		cout << "DML-Interface$ ";
@@ -44,19 +43,11 @@ void DBConnection::cmdLineInterface()
 void DBConnection::executeCommand(string command)
 {
 	vector<Token> tokens = lexInputLine(command);
-	//need to uncomment once command is implemented for parser class
-	//par.command(tokens);
+	par.command(tokens);
 }
 
 Table DBConnection::getTempTable(const string& tableName)
 {
 	return par.getTempTable(tableName);
 }
-/*
-int main()
-{
-	DBConnection dbc;
-	dbc.cmdLineInterface();
-}
-*/
 
