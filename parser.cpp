@@ -5,6 +5,7 @@
 #include "rdbms.h"
 #include <sstream> //for turning string to int
 #include <fstream>	//for file I/O
+#include <iostream>
 
 using namespace std;
 
@@ -147,22 +148,20 @@ vector<string> Parser::attributeList(vector<Token>& tokens)
 {
 	vector<string> attributes;
 	vector<Token>::iterator iter = tokens.begin();
+
 	while (true)
 	{
 		attributes.push_back(iter->content);
 
-		// Skipping the , if there is one. 
-		if ((iter + 1) != tokens.end())
+		if ((iter + 1) == tokens.end())
 		{
-			if ((iter + 1)->type == Token::COMMA)
-			{
-				iter = iter + 2;
-			}
+			break;
 		}
 		else{
-			return attributes;
+			iter = iter + 2;
 		}
 	}
+	return attributes;
 }
 
 vector<string> Parser::typedAttributeList(vector<Token>& tokens)
@@ -172,24 +171,30 @@ vector<string> Parser::typedAttributeList(vector<Token>& tokens)
 	while (true)
 	{
 		attributes.push_back(iter->content);
-
-		if (iter+2 != tokens.end())
+	
+		if ((iter + 1)->content.compare("INTEGER") == 0)
 		{
-			if ((iter + 1)->content.compare("VARCAR") == 0)
+			if ((iter + 2) == tokens.end())
 			{
-				iter = iter + 6;
+				break;
 			}
 			else{
-				if ((iter + 1)->content.compare("INTEGER") == 0)
-				{
-					iter = iter + 3;
-				}
+				iter = iter + 3;
 			}
 		}
-		else{
-			return attributes;
+		else if ((iter + 1)->content.compare("VARCHAR") == 0)
+		{
+			if ((iter + 5) == tokens.end())
+			{
+				break;
+			}
+			else{
+				iter = iter + 6;
+			}
 		}
 	}
+
+	return attributes;
 }
 
 ComparisonNode* Parser::comparison(vector<Token>& tokens)
@@ -763,29 +768,28 @@ void Parser::show(vector<Token>& tokens)
 void Parser::create(vector<Token>& tokens)
 {
 	vector<Token>::iterator iter = tokens.begin();
-	/*
-	if ((iter->content.compare("CREATE") != 0) && ((iter + 1)->content.compare("TABLE") != 0) && ((iter + 3)->type != Token::OPENPAREN))
-	{
-		// error
-	}
-	*/
 	string tableName = (iter + 2)->content;
 
+	int depth = 1;
 	iter = iter + 4;
 	vector<Token> typedAtribTokens;
-	while (iter->type != Token::CLOSEPAREN)
+	while (depth != 0)
 	{
+		if (iter->type == Token::OPENPAREN)
+		{
+			depth++;
+		}
+		else if (iter->type == Token::CLOSEPAREN)
+		{
+			depth--;
+		}
+
 		typedAtribTokens.push_back(*iter);
 		iter++;
 	}
+	typedAtribTokens.pop_back(); // removes trailing closeparen
 
-	/*
-	if (((iter + 1)->content.compare("PRIMARY") != 0) && ((iter + 2)->content.compare("KEY") != 0) && ((iter + 3)->type != Token::OPENPAREN))
-	{
-		// error
-	}
-	*/
-	iter = iter + 4;
+	iter = iter + 3;
 	vector<Token> atribTokens;
 	while (iter->type != Token::CLOSEPAREN)
 	{
@@ -795,6 +799,17 @@ void Parser::create(vector<Token>& tokens)
 
 	vector<string> typedAtribs = typedAttributeList(typedAtribTokens);
 	vector<string> primaryKeys = attributeList(atribTokens);
+	
+	/*
+	for (int i = 0; i < typedAtribs.size(); i++)
+		cout << typedAtribs[i] << " ";
+	cout << "\n";
+
+
+	for (int i = 0; i < primaryKeys.size(); i++)
+		cout << primaryKeys[i] << " ";
+	cout << "\n";
+	*/
 
 	rdbms->createTable(tableName, typedAtribs, primaryKeys);
 }
@@ -905,40 +920,52 @@ void Parser::myDelete(vector<Token>& tokens)
 
 void Parser::command(vector<Token>& tokens)
 {
-	if (tokens[0].content.compare("OPEN"))
+	//cout << "In Command";
+	if (tokens[0].content.compare("OPEN") == 0)
 	{
 		open(tokens);
 	}
-	else if (tokens[0].content.compare("CLOSE"))
+	else if (tokens[0].content.compare("CLOSE") == 0)
 	{
 		close(tokens);
 	}
-	else if (tokens[0].content.compare("WRITE"))
+	else if (tokens[0].content.compare("WRITE") == 0)
 	{
+		//cout << "\nIn Write \n";
 		write(tokens);
 	}
-	else if(tokens[0].content.compare("SHOW"))
+	else if (tokens[0].content.compare("SHOW") == 0)
 	{
 		show(tokens);
 	}
-	else if(tokens[0].content.compare("CREATE"))
+	else if (tokens[0].content.compare("CREATE") == 0)
 	{
 		create(tokens);
 	}
-	else if(tokens[0].content.compare("UPDATE"))
+	else if (tokens[0].content.compare("UPDATE") == 0)
 	{
 		update(tokens);
 	}
-	else if(tokens[0].content.compare("INSERT"))
+	else if (tokens[0].content.compare("INSERT") == 0)
 	{
 		insert(tokens);
 	}
-	else if (tokens[0].content.compare("DELETE"))
+	else if (tokens[0].content.compare("DELETE") == 0)
 	{
 		myDelete(tokens);
 	}
-	else if (tokens[1].content.compare("<-"))
+	else if (tokens[1].content.compare("<-") == 0)
 	{
 		query(tokens);
 	}
+}
+
+void Parser::printTokenList(vector<Token> tokens)
+{
+	cout << "\n";
+	for (int i = 0; i < tokens.size(); i++)
+	{
+		cout << tokens[i].content << " ";
+	}
+	cout << "\n";
 }

@@ -76,6 +76,9 @@ class Parser{
 	//this simply saves the current state of a relation in a .db file so it can be reconstructed later
 	 void closeRelationFile(const std::string& relationName);
 
+	 // for debugging
+	 void printTokenList(vector<Token> tokens);
+
 public:
 	//Constructors.
 	Parser();
