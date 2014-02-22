@@ -66,7 +66,7 @@ void Parser::closeRelationFile(const string& relationName)
 		//indicating this Datum is a string
 		if (typeSample[i].numData == -999)
 		{
-			types.push_back("VARCHAR(30)");
+			types.push_back("VARCHAR(20)");
 		}
 		else
 		{
@@ -480,8 +480,7 @@ Table Parser::selection(vector<Token>& tokens)
 	ConditionNode* conditionTree = condition(condTokens);
 	Table selectedTable = atomExpression(atomTokens);
 
-	//return selectFromTable 
-	return selectedTable; //removing error not finished.
+	return selectedTable.selectFromTable(selectedTable, *conditionTree);
 }
 
 Table Parser::projection(vector<Token>& tokens)
@@ -568,7 +567,7 @@ Table Parser::renaming(vector<Token>& tokens)
 	Table selectedTable = atomExpression(atomTokens);
 
 	// return projectFromTable 
-	return selectedTable; //removing error not finished.
+	return  selectedTable.renameAttributes(atribNames);
 }
 
 Table Parser::myUnion(vector<Token>& tokens)
@@ -754,7 +753,7 @@ void Parser::write(vector<Token>& tokens)
 void Parser::show(vector<Token>& tokens)
 {
 	vector<Token> atomExprTokens;
-	vector<Token>::iterator iter = tokens.begin() + 2;
+	vector<Token>::iterator iter = tokens.begin() + 1;
 	while (iter != tokens.end())
 	{
 		atomExprTokens.push_back(*iter);
@@ -827,7 +826,7 @@ void Parser::update(vector<Token>& tokens)
 	{
 		varNames.push_back(iter->content);
 		Datum newVal;
-		if (isdigit((iter + 2)->content[0]))
+		if (isNum((iter + 2)->content))
 		{
 			istringstream buffer((iter + 2)->content);
 			int numContent;
@@ -840,7 +839,7 @@ void Parser::update(vector<Token>& tokens)
 			newVals.push_back(Datum((iter + 2)->content));
 		}
 
-		if ((iter + 3)->content.compare("WHERE"))
+		if ((iter + 3)->content.compare("WHERE") == 0)
 		{
 			iter = iter + 4;
 			break;
@@ -873,7 +872,7 @@ void Parser::insert(vector<Token>& tokens)
 		vector<Datum> info;
 		while (iter != tokens.end())
 		{
-			if (isdigit(iter->content[0]))
+			if (isNum(iter->content))
 			{
 				istringstream buffer(iter->content);
 				int numContent;
@@ -958,6 +957,17 @@ void Parser::command(vector<Token>& tokens)
 	{
 		query(tokens);
 	}
+}
+
+bool Parser::isNum(string input)
+{
+	for (int i = 0; input.length(); i++)
+	{
+		if (!isdigit(input[i]))
+			return false;
+	}
+	
+	return true;
 }
 
 void Parser::printTokenList(vector<Token> tokens)
