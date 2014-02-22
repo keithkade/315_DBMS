@@ -728,22 +728,22 @@ void Parser::query(vector<Token>& tokens)
 	tempTables.insert(pair<string, Table>(queryTableName, resultTable));
 }
 
-// Needs to be finished
 void Parser::open(vector<Token>& tokens)
 {
 	string tableName = tokens[1].content;
+	openRelationFile(tableName);
 }
 
-// Needs to be finished
 void Parser::close(vector<Token>& tokens)
 {
 	string tableName = tokens[1].content;
+	closeRelationFile(tableName);
 }
 
-// Needs to be finished
 void Parser::write(vector<Token>& tokens)
 {
 	string tableName = tokens[1].content;
+	writeRelationToFile(tableName);
 }
 
 void Parser::show(vector<Token>& tokens)

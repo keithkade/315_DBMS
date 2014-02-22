@@ -417,16 +417,16 @@ vector<vector<Token> > lexFile(string fileName){
 		if (line.find("<-") != std::string::npos){
 			lexedRow = queryLex(line);
 			for (int i = 0; i < lexedRow.size(); i++){
-				cout << "'" << lexedRow[i].content << "' ";
+				//cout << "'" << lexedRow[i].content << "' ";
 			}
-			cout << endl << endl;
+			//cout << endl << endl;
 		}
 		else{
 			lexedRow = commandLex(line);
 			for (int i = 0; i < lexedRow.size(); i++){
-				cout << "'" << lexedRow[i].content << "' ";
+				//cout << "'" << lexedRow[i].content << "' ";
 			}
-			cout << endl << endl;
+			//cout << endl << endl;
 		}
 		lexedInput.push_back(lexedRow);
 	}
@@ -440,16 +440,16 @@ vector<Token> lexInputLine(string inputLine){
 	if (inputLine.find("<-") != std::string::npos){
 		lexedInput = queryLex(inputLine);
 		for (int i = 0; i < lexedInput.size(); i++){
-			cout << "'" << lexedInput[i].content << "' ";
+			//cout << "'" << lexedInput[i].content << "' ";
 		}
-		cout << endl << endl;
+		//cout << endl << endl;
 	}
 	else{
 		lexedInput = commandLex(inputLine);
 		for (int i = 0; i < lexedInput.size(); i++){
-			cout << "'" << lexedInput[i].content << "' ";
+			//cout << "'" << lexedInput[i].content << "' ";
 		}
-		cout << endl << endl;
+		//cout << endl << endl;
 	}
 	
 	return lexedInput;

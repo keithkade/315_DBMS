@@ -51,9 +51,3 @@ Table DBConnection::getTempTable(const string& tableName)
 	return par.getTempTable(tableName);
 }
 
-
-int main()
-{
-	DBConnection dbc;
-	dbc.cmdLineInterface();
-}
