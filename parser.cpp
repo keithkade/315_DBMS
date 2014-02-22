@@ -356,17 +356,17 @@ Table Parser::expression(vector<Token>& tokens)
 	if (iter->type == Token::KEYWORD)
 	{
 		string keyWord = iter->content;
-		if (keyWord.compare("select"))
+		if (keyWord.compare("select") == 0)
 		{
 			tokens.erase(iter);
 			return selection(tokens);
 		}
-		else if (keyWord.compare("project"))
+		else if (keyWord.compare("project") == 0)
 		{
 			tokens.erase(iter);
 			return projection(tokens);
 		}
-		else if (keyWord.compare("rename"))
+		else if (keyWord.compare("rename") == 0)
 		{
 			tokens.erase(iter);
 			return renaming(tokens);
