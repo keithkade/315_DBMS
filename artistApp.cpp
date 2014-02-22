@@ -84,10 +84,33 @@ void artistsSelected()
 		// new tabDepth after selection
 		tabDepth = "\t\t";
 
+		// variables needed within switch
+		string command;
+		string name;
+		string birthDate;
+		string deathDate;
+		string nationality;
+
 		// switch based on user choice
 		switch(selection)
 		{
 			case 1:
+				// get artist info from user
+				cout << tabDepth << "Artist name: ";
+				cin >> name;
+				cout << tabDepth << "Date of birth (mm/dd/yyyy): ";
+				cin >> birthDate;
+				cout << tabDepth << "Date of death (mm/dd/yyyy): ";
+				cin >> deathDate;
+				cout << tabDepth << "Artist's nationality: ";
+				cin >> nationality;
+
+				command = "INSERT INTO Artist VALUES FROM (\"" + name + "\", \""
+					+ birthDate + "\", \"" + nationality + "\", \"" + deathDate + "\");";
+				dbCon.executeCommand(command);
+				command = "CLOSE Artist;";
+				dbCon.executeCommand(command);
+				
 
 				break;
 			case 2:
@@ -109,10 +132,52 @@ void artistsSelected()
 
 void createTablesForArtistDB()
 {
-	string command = "CREATE TABLE Artists (name VARCHAR(30), birthDate VARCHAR(12),"
+	// Artist table
+	string command = "CREATE TABLE Artist (name VARCHAR(30), birthDate VARCHAR(12),"
 		" nationality VARCHAR(20), deathDate VARCHAR(20)) PRIMARY KEY (name);";
 	dbCon.executeCommand(command);
-	
-	command = "WRITE Atists;";
+	command = "WRITE Artist;";
+	dbCon.executeCommand(command);
+
+	// Museum table
+	command = "CREATE TABLE Museum (name VARCHAR(30), location VARCHAR(30),"
+		" dateEstab VARCHAR(12)) PRIMARY KEY (name);";
+	dbCon.executeCommand(command);
+	command = "WRITE Museum;";
+	dbCon.executeCommand(command);
+
+	// Period table
+	command = "CREATE TABLE Period (name VARCHAR(30), date VARCHAR(12)) PRIMARY"
+		" KEY (name);";
+	dbCon.executeCommand(command);
+	command = "WRITE Period;";
+	dbCon.executeCommand(command);
+
+	// Work table
+	command = "CREATE TABLE Work (name VARCHAR(40), medium VARCHAR(20), dateMade"
+		" VARCHAR(12), currentValue INTEGER) PRIMARY KEY (name);";
+	dbCon.executeCommand(command);
+	command = "WRITE Work;";
+	dbCon.executeCommand(command);
+
+	// MuseumContains table
+	command = "CREATE TABLE MuseumContains (museumName VARCHAR(30), workName VARCHAR(40))"
+		" PRIMARY KEY (museumName, workName);";
+	dbCon.executeCommand(command);
+	command = "WRITE MuseumContains;";
+	dbCon.executeCommand(command);
+
+	// ArtistWorks table
+	command = "CREATE TABLE ArtistWorks (artistName VARCHAR(30), workName VARCHAR(40))"
+		" PRIMARY KEY (artistName, workName);";
+	dbCon.executeCommand(command);
+	command = "WRITE ArtistWorks;";
+	dbCon.executeCommand(command);
+
+	// PeriodWorks
+	command = "CREATE TABLE PeriodWorks (periodName VARCHAR(30), workName VARCHAR(40))"
+		" PRIMARY KEY (periodName, workName);";
+	dbCon.executeCommand(command);
+	command = "WRITE PeriodWorks;";
 	dbCon.executeCommand(command);
 }

@@ -66,7 +66,7 @@ void Parser::closeRelationFile(const string& relationName)
 		//indicating this Datum is a string
 		if (typeSample[i].numData == -999)
 		{
-			types.push_back("VARCHAR(20)");
+			types.push_back("VARCHAR(30)");
 		}
 		else
 		{
