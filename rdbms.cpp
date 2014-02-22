@@ -350,11 +350,13 @@ void Database::deleteFromTable(const string& tableName, ConditionNode condition)
 {
 	// Begin iterating from end so that removes don't change position of any data we have yet to look at.
 	vector<vector<Datum> >::iterator it;
-	it = allTables[tableName].data.end();
-	while (it != allTables[tableName].data.begin()) {
-		it--;
+	it = allTables[tableName].data.begin();
+	while (it != allTables[tableName].data.end()) {
 		if (condition.eval(allTables[tableName].attributeNames, *it)) {
-			allTables[tableName].data.erase(it);
+			it = allTables[tableName].data.erase(it);
+		}
+		else{
+			it++;
 		}
 	}
 }
