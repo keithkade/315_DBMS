@@ -163,7 +163,7 @@ vector<Token> afterAssignQueryLex(string line){
 		else if (curChar == '!'){
 			makeCommVarTok(afterRetVecter, curString);
 			curString = "";
-			//can be > or >=
+			//can be !=
 			if (line[stringPos + 1] == '='){
 				Token greatEqTok(Token::tokenType::SYMBOL);
 				greatEqTok.content = "!=";
@@ -394,6 +394,22 @@ vector<Token> commandLex(string line){
 			}
 			else {
 				cout << "ERROR when parsing a >" << endl;
+				break;
+			}
+			stringPos++; //skip over next char since we have accounted for it
+		}
+
+		else if (curChar == '!'){
+			makeCommVarTok(retRow, curString);
+			curString = "";
+			//can be !=
+			if (line[stringPos + 1] == '='){
+				Token greatEqTok(Token::tokenType::SYMBOL);
+				greatEqTok.content = "!=";
+				retRow.push_back(greatEqTok);
+			}
+			else {
+				cout << "ERROR when parsing a !" << endl;
 				break;
 			}
 			stringPos++; //skip over next char since we have accounted for it
