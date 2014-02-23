@@ -17,7 +17,7 @@ DBConnection dbCon;
 int main()
 {
 	// load table data if they exists
-	if (exists("Artists.db")){
+	if (exists("Artist.db")){
 		openAllTables();
 	}
 	//create table data if this is first time running
@@ -102,7 +102,7 @@ void artistsSelected()
 		cout << tabDepth << "1 - Add artist" << endl;
 		cout << tabDepth << "2 - Remove artist" << endl;
 		cout << tabDepth << "3 - Show some artist info" << endl;
-		cout << tabDepth << "4 - Update an artist's DOD" << endl;
+		cout << tabDepth << "4 - Update an artist's year of death" << endl;
 		cout << tabDepth << "5 - Return to previous menu" << endl;
 
 		cout << tabDepth << "Selection: ";
@@ -160,7 +160,19 @@ void artistsSelected()
 				tabDepth = "\t";
 				break;
 			case 4:
+				cout << tabDepth << "Updating artist's year of death\n" << endl;
 
+				cout << tabDepth << "Artist name: ";
+				cin >> name;
+				cout << tabDepth << "Year of death: ";
+				cin >> deathYear;
+
+				command = "UPDATE Artist SET deathYear == " + to_string(deathYear)
+					+ " WHERE (name == \"" + name + "\");";
+				dbCon.executeCommand(command);
+				
+				cout << endl;
+				tabDepth = "\t";
 				break;
 			case 5:
 				return;
@@ -191,6 +203,7 @@ void showForArtists()
 
 		// variables needed within switch
 		string command;
+		string name;
 
 		switch(selection)
 		{
@@ -202,10 +215,58 @@ void showForArtists()
 				tabDepth = "\t\t";
 				break;
 			case 2:
+				cout << tabDepth << "Artists in a museum\n" << endl;
+
+				cout << tabDepth << "Museum name: ";
+				cin >> name;
+
+				// using cross product here instead of natural join because we have to use it somewhere!
+				command = "crossProduct <- MuseumContains * ArtistWorks;";
+				dbCon.executeCommand(command);
+
+				command = "correctMuseum <- select (museumName == \"" + name + "\") crossProduct;";
+				dbCon.executeCommand(command);
+
+				command = "artistNames <- project (artistName) correctMuseum;";
+				dbCon.executeCommand(command);
+
+				command = "SHOW artistNames;";
+				dbCon.executeCommand(command);
+
+				tabDepth = "\t\t";
 				break;
 			case 3:
+				cout << tabDepth << "Artists not in a museum\n" << endl;
+
+				cout << tabDepth << "Museum name: ";
+				cin >> name;
+
+				command = "commonWorkJoin <- MuseumContains JOIN ArtistWorks;";
+				dbCon.executeCommand(command);
+
+				command = "correctMuseum <- select (museumName == \"" + name + "\") commonWorkJoin;";
+				dbCon.executeCommand(command);
+
+				// these are all the artists in a museum
+				command = "artistsIn <- project (artistName) correctMuseum;";
+				dbCon.executeCommand(command);
+
+				command = "artistsNotIn <- Artist - artistsIn;";
+				dbCon.executeCommand(command);
+
+				cout << tabDepth << "List of artists\n" << endl;
+				command = "SHOW artistsNotIN;";
+				dbCon.executeCommand(command);
+
+				tabDepth = "\t\t";
 				break;
 			case 4:
+				cout << tabDepth << "List of artist nationalities\n" << endl;
+
+				command = "artistNationalities <- project (name, nationality) Artist;";
+				dbCon.executeCommand(command);
+
+				tabDepth = "\t\t";
 				break;
 			case 5:
 				return;

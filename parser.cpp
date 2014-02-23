@@ -932,7 +932,6 @@ void Parser::myDelete(vector<Token>& tokens)
 
 void Parser::command(vector<Token>& tokens)
 {
-	//cout << "In Command";
 	if (tokens[0].content.compare("OPEN") == 0)
 	{
 		open(tokens);
