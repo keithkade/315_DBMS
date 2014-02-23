@@ -3,6 +3,9 @@
 // Handle Artist selection from command line interface
 void artistsSelected();
 
+// Handle selction protion of artist menu
+void showForArtists();
+
 
 // Open (create and load) all database tables when application starts
 void openAllTables();

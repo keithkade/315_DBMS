@@ -124,7 +124,7 @@ void artistsSelected()
 		{
 			case 1:
 				cout << tabDepth << "Adding an artist\n" << endl;
-				// get artist info from user
+
 				cout << tabDepth << "Artist name: ";
 				cin >> name;
 				cout << tabDepth << "Year of birth: ";
@@ -144,6 +144,7 @@ void artistsSelected()
 				break;
 			case 2:
 				cout << tabDepth << "Removing an artist\n" << endl;
+
 				cout << tabDepth << "Artist name: ";
 				cin >> name;
 
@@ -154,10 +155,56 @@ void artistsSelected()
 				tabDepth = "\t";
 				break;
 			case 3:
-
+				showForArtists();
+				cout << endl;
+				tabDepth = "\t";
 				break;
 			case 4:
 
+				break;
+			case 5:
+				return;
+			default:
+				continue;
+		}
+	}
+}
+
+void showForArtists()
+{
+	int selection = 0;
+	while(true)
+	{
+		cout << tabDepth << "Enter the number corresponding to what you want to do." << endl;
+		cout << tabDepth << "1 - Show all artists" << endl;
+		cout << tabDepth << "2 - Show artists in a museum" << endl;
+		cout << tabDepth << "3 - Show artists not in a museum" << endl;
+		cout << tabDepth << "4 - Show all artists nationalities" << endl;
+
+		cout << tabDepth << "Selection: ";
+		cin >> selection;
+		cout << endl;
+
+		// new tabDepth after selection
+		tabDepth = "\t\t\t";
+
+		// variables needed within switch
+		string command;
+
+		switch(selection)
+		{
+			case 1:
+				cout << tabDepth << "List of all artists\n" << endl;
+				command = "SHOW Artist;";
+				dbCon.executeCommand(command);
+
+				tabDepth = "\t\t";
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
 				break;
 			case 5:
 				return;
