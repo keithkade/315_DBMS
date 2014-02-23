@@ -183,12 +183,17 @@ vector<Token> afterAssignQueryLex(string line){
 				Token eqTok(Token::tokenType::SYMBOL);
 				eqTok.content = "==";
 				afterRetVecter.push_back(eqTok);
+				stringPos++; //skip over next char since we have accounted for it
+			}
+			else if (line[stringPos + 1] != '='){
+				Token setEqTok(Token::tokenType::SYMBOL);
+				setEqTok.content = "=";
+				afterRetVecter.push_back(setEqTok);
 			}
 			else {
 				cout << "ERROR when parsing a =" << endl;
 				return emptyRetVecter;
 			}
-			stringPos++; //skip over next char since we have accounted for it
 		}
 
 		//if it is surrounded by quotes then it is a literal
@@ -422,12 +427,17 @@ vector<Token> commandLex(string line){
 				Token eqTok(Token::tokenType::SYMBOL);
 				eqTok.content = "==";
 				retRow.push_back(eqTok);
+				stringPos++; //skip over next char since we have accounted for it
+			}
+			else if (line[stringPos + 1] != '='){
+				Token setEqTok(Token::tokenType::SYMBOL);
+				setEqTok.content = "=";
+				retRow.push_back(setEqTok);
 			}
 			else {
 				cout << "ERROR when parsing a =" << endl;
-				break;
+				return retRow;
 			}
-			stringPos++; //skip over next char since we have accounted for it
 		}
 
 

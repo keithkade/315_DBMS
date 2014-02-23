@@ -171,7 +171,7 @@ void artistsSelected()
 				cout << tabDepth << "Year of death: ";
 				getline(cin, deathYear);
 
-				command = "UPDATE Artist SET deathYear == " + deathYear
+				command = "UPDATE Artist SET deathYear = " + deathYear
 					+ " WHERE (name == \"" + name + "\");";
 				dbCon.executeCommand(command);
 				

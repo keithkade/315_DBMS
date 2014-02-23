@@ -381,7 +381,16 @@ void Database::updateTable(const string& tableName, const vector<string>& attrib
 				attrIndeces.push_back(j);
 		}
 	}
-
+	
+	bool isPrimaryModified; // set to let us know if we are updating primary keys or not
+	for (int i = 0; i < allTables[tableName].keyNames.size(); i++){
+		for (int j = 0; j < attributeName.size(); j++){
+			if (allTables[tableName].keyNames[i] == attributeName[j]){
+				isPrimaryModified = true;
+			}
+		}
+	}
+	
 	// Begin iterating from end so that removes don't change position of any data we have yet to look at.
 	vector<vector<Datum> >::iterator it;
 	it = allTables[tableName].data.end();
@@ -390,12 +399,12 @@ void Database::updateTable(const string& tableName, const vector<string>& attrib
 		if (condition.eval(allTables[tableName].attributeNames, *it)) {
 			for (int j = 0; j<attrIndeces.size(); j++){
 				dupRow = *it;
-				dupRow[attrIndeces[j]] = newValue[j];
-				if (!allTables[tableName].duplicateExists(dupRow)){
-					(*it)[attrIndeces[j]] = newValue[j];
+				dupRow[attrIndeces[j]] = newValue[j];	
+				if (allTables[tableName].duplicateExists(dupRow) && isPrimaryModified){
+					cout << "That update would cause a conflict of primary keys\n";				
 				}
 				else {
-					cout << "That update would cause a conflict of primary keys\n";
+					(*it)[attrIndeces[j]] = newValue[j];
 				}
 			}
 		}
