@@ -796,20 +796,18 @@ void Parser::create(vector<Token>& tokens)
 		iter++;
 	}
 
-	printTokenList(typedAtribTokens);
-	printTokenList(atribTokens);
 
 	vector<string> typedAtribs = typedAttributeList(typedAtribTokens);
 	vector<string> primaryKeys = attributeList(atribTokens);
 	
 	for (int i = 0; i < typedAtribs.size(); i++)
-		cout << typedAtribs[i] << " ";
-	cout << "\n";
+		//cout << typedAtribs[i] << " ";
+	//cout << "\n";
 
 
 	for (int i = 0; i < primaryKeys.size(); i++)
-		cout << primaryKeys[i] << " ";
-	cout << "\n";
+		//cout << primaryKeys[i] << " ";
+	//cout << "\n";
 
 	rdbms->createTable(tableName, typedAtribs, primaryKeys);
 }
@@ -865,7 +863,6 @@ void Parser::update(vector<Token>& tokens)
 
 void Parser::insert(vector<Token>& tokens)
 {
-	printTokenList(tokens);
 	vector<Token>::iterator iter = tokens.begin();
 	string tableName = (iter + 2)->content;
 	iter = iter + 5;
@@ -925,7 +922,6 @@ void Parser::myDelete(vector<Token>& tokens)
 
 void Parser::command(vector<Token>& tokens)
 {
-	//cout << "In Command";
 	if (tokens[0].content.compare("OPEN") == 0)
 	{
 		open(tokens);

@@ -94,34 +94,43 @@ void artistsSelected()
 		// variables needed within switch
 		string command;
 		string name;
-		int birthDate;
-		int deathDate;
+		int birthYear;
+		int deathYear;
 		string nationality;
 
 		// switch based on user choice
 		switch(selection)
 		{
 			case 1:
+				cout << tabDepth << "Adding an artist\n" << endl;
 				// get artist info from user
 				cout << tabDepth << "Artist name: ";
 				cin >> name;
-				cout << tabDepth << "Date of birth (yyyy): ";
-				cin >> birthDate;
-				cout << tabDepth << "Date of death (yyyy): ";
-				cin >> deathDate;
+				cout << tabDepth << "Year of birth: ";
+				cin >> birthYear;
+				cout << tabDepth << "Year of death: ";
+				cin >> deathYear;
 				cout << tabDepth << "Artist's nationality: ";
 				cin >> nationality;
 
 				command = "INSERT INTO Artist VALUES FROM (\"" + name + "\", "
-					+ to_string(birthDate) + ", \"" + nationality + "\", "
-					+ to_string(deathDate) + ");";
+					+ to_string(birthYear) + ", \"" + nationality + "\", "
+					+ to_string(deathYear) + ");";
 				dbCon.executeCommand(command);
 
-				cout << command <<endl;
+				cout << endl;
 				tabDepth = "\t";
 				break;
 			case 2:
+				cout << tabDepth << "Removing an artist\n" << endl;
+				cout << tabDepth << "Artist name: ";
+				cin >> name;
 
+				command = "DELETE FROM Artist WHERE (name == \"" + name + "\");";
+				dbCon.executeCommand(command);
+				
+				cout << endl;
+				tabDepth = "\t";
 				break;
 			case 3:
 
@@ -177,28 +186,28 @@ void closeAndSaveAllTables()
 void createTablesForArtistDB()
 {
 	// Artist table
-	string command = "CREATE TABLE Artist (name VARCHAR(30), birthDate INTEGER,"
-		" nationality VARCHAR(20), deathDate VARCHAR(20)) PRIMARY KEY (name);";
+	string command = "CREATE TABLE Artist (name VARCHAR(30), birthYear INTEGER,"
+		" nationality VARCHAR(20), deathYear VARCHAR(20)) PRIMARY KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Artist;";
 	dbCon.executeCommand(command);
 
 	// Museum table
 	command = "CREATE TABLE Museum (name VARCHAR(30), location VARCHAR(30),"
-		" dateEstab INTEGER) PRIMARY KEY (name);";
+		" yearEstab INTEGER) PRIMARY KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Museum;";
 	dbCon.executeCommand(command);
 
 	// Period table
-	command = "CREATE TABLE Period (name VARCHAR(30), date INTEGER) PRIMARY"
+	command = "CREATE TABLE Period (name VARCHAR(30), Year INTEGER) PRIMARY"
 		" KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Period;";
 	dbCon.executeCommand(command);
 
 	// Work table
-	command = "CREATE TABLE Work (name VARCHAR(40), medium VARCHAR(20), dateMade"
+	command = "CREATE TABLE Work (name VARCHAR(40), medium VARCHAR(20), yearMade"
 		" INTEGER, currentValue INTEGER) PRIMARY KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Work;";
