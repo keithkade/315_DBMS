@@ -5,6 +5,8 @@ RDBMS: Kade Keith, Matthew Saari, Ryan Ledbetter, Victor Gutierrez
 #pragma once
 #include "rdbms.h"
 #include "ConditionTree.h"
+#include <iomanip>	// for setw
+#include <locale>	// for toupper
 
 using namespace std;
 
@@ -305,23 +307,30 @@ bool Table::duplicateExists(const vector<Datum>& newRow){
 }
 	
 void Table::printTable(){
+	cout << left;
+	cout << "---------------------------------------------------------" 
+		"--------------------" << endl;
+	string tempAtt = "";
 	for (int i = 0; i < attributeNames.size(); i++){
-		cout << attributeNames[i] << ", ";
+		tempAtt = attributeNames[i];
+		transform(tempAtt.begin(), tempAtt.end(), tempAtt.begin(), toupper);
+		cout << setw(15) << tempAtt;
 	}
 
 	cout << endl;
 	for (int i = 0; i<data.size(); i++){
 		for (int j = 0; j<attributeNames.size(); j++){
 			if (data[i][j].numData == -999){
-				cout << data[i][j].stringData << " ";
+				cout << setw(15) << data[i][j].stringData;
 			}
 			else{
-				cout << data[i][j].numData << " ";
+				cout << setw(15) << data[i][j].numData;
 			}
 		}
 		cout << endl;
 	}
-	cout << endl;
+	cout << "---------------------------------------------------------"
+		"--------------------\n" << endl;
 }
 
 

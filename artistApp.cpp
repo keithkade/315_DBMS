@@ -158,6 +158,7 @@ void showForArtists()
 		cout << tabDepth << "2 - Show artists in a museum" << endl;
 		cout << tabDepth << "3 - Show artists not in a museum" << endl;
 		cout << tabDepth << "4 - Show all artists nationalities" << endl;
+		cout << tabDepth << "5 - Return to previous menu" << endl;
 
 		cout << tabDepth << "Selection: ";
 		cin >> selection;
