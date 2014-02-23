@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include "artistApp.h"
 #include "rdbms.h"
@@ -15,8 +16,14 @@ DBConnection dbCon;
 
 int main()
 {
-	// load table data
-	openAllTables();
+	// load table data if they exists
+	if (exists("Artists.db")){
+		openAllTables();
+	}
+	//create table data if this is first time running
+	else{
+		createTablesForArtistDB();
+	}
 
 	int selection = 0;
 
@@ -68,6 +75,21 @@ int main()
 
 
 	getchar();
+}
+
+
+bool exists(string filePath)
+{
+	ifstream check(filePath.c_str());
+
+	if (check.good()){
+		check.close();
+		return true;
+	}
+	else {
+		check.close();
+		return false;
+	}
 }
 
 void artistsSelected()

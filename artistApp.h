@@ -1,3 +1,4 @@
+#include <string>
 
 // Handle Artist selection from command line interface
 void artistsSelected();
@@ -23,3 +24,6 @@ void worksSelected();
 // Only need to use this function one time to create tables initially
 // After one use it should be commented out otherwise it will overwrite table data
 void createTablesForArtistDB();
+
+//returns whether a file exists
+bool exists(std::string filePath);
