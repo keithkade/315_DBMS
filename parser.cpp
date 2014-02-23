@@ -207,16 +207,19 @@ ComparisonNode* Parser::comparison(vector<Token>& tokens)
 			leftNode = new VariableNode(tokens[0].content);
 		}
 		else{
-			if (isdigit(tokens[0].content[0]))
+			if (tokens[0].content[0] == '\"')
 			{
+				tokens[0].content.erase(tokens[0].content.begin());
+				tokens[0].content.pop_back();
+				cout << "1" << tokens[0].content << "\n";
+				leftNode = new LiteralNode(tokens[0].content);
+			}
+			else{
 				istringstream buffer(tokens[0].content);
 				int numContent;
 				buffer >> numContent;
 
 				leftNode = new LiteralNode(numContent);
-			}
-			else{
-				leftNode = new LiteralNode(tokens[0].content);
 			}
 		}
 
@@ -252,16 +255,18 @@ ComparisonNode* Parser::comparison(vector<Token>& tokens)
 			rightNode = new VariableNode(tokens[2].content);
 		}
 		else{
-			if (isdigit(tokens[2].content[0]))
+			if (tokens[2].content[0] == '\"')
 			{
+				tokens[2].content.erase(tokens[2].content.begin());
+				tokens[2].content.pop_back();
+				rightNode = new LiteralNode(tokens[2].content);
+			}
+			else{
 				istringstream buffer(tokens[2].content);
 				int numContent;
 				buffer >> numContent;
 
 				rightNode = new LiteralNode(numContent);
-			}
-			else{
-				rightNode = new LiteralNode(tokens[2].content);
 			}
 		}
 
@@ -729,6 +734,8 @@ void Parser::query(vector<Token>& tokens)
 	}
 
 	Table resultTable = expression(exprTokens);
+
+
 	tempTables.insert(pair<string, Table>(queryTableName, resultTable));
 }
 
@@ -796,19 +803,21 @@ void Parser::create(vector<Token>& tokens)
 		iter++;
 	}
 
+	//printTokenList(typedAtribTokens);
+	//printTokenList(atribTokens);
 
 	vector<string> typedAtribs = typedAttributeList(typedAtribTokens);
 	vector<string> primaryKeys = attributeList(atribTokens);
-	
+	/*
 	for (int i = 0; i < typedAtribs.size(); i++)
-		//cout << typedAtribs[i] << " ";
-	//cout << "\n";
+		cout << typedAtribs[i] << " ";
+	cout << "\n";
 
 
 	for (int i = 0; i < primaryKeys.size(); i++)
-		//cout << primaryKeys[i] << " ";
-	//cout << "\n";
-
+		cout << primaryKeys[i] << " ";
+	cout << "\n";
+	*/
 	rdbms->createTable(tableName, typedAtribs, primaryKeys);
 }
 
@@ -863,6 +872,7 @@ void Parser::update(vector<Token>& tokens)
 
 void Parser::insert(vector<Token>& tokens)
 {
+	//printTokenList(tokens);
 	vector<Token>::iterator iter = tokens.begin();
 	string tableName = (iter + 2)->content;
 	iter = iter + 5;
@@ -922,6 +932,7 @@ void Parser::myDelete(vector<Token>& tokens)
 
 void Parser::command(vector<Token>& tokens)
 {
+	//cout << "In Command";
 	if (tokens[0].content.compare("OPEN") == 0)
 	{
 		open(tokens);
