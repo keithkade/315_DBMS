@@ -42,15 +42,14 @@ int main()
 
 				break;
 			case 2:	// Museums
-
+				museumsSelected();
 
 				break;
 			case 3:	// Periods
 
-
 				break;
 			case 4:	// Works
-
+				worksSelected();
 
 				break;
 			case 5:	// To Exit
@@ -130,32 +129,246 @@ void artistsSelected()
 	}
 }
 
+void museumsSelected()
+{
+	int selection = 0;
+
+	while (true)
+	{
+		cout << tabDepth << "Enter the number corresponding to what you want to do." << endl;
+		cout << tabDepth << "1 - Add museum" << endl;
+		cout << tabDepth << "2 - Remove museum" << endl;
+		cout << tabDepth << "3 - Museum buys work" << endl;
+		cout << tabDepth << "4 - Show works in a museum" << endl;
+		cout << tabDepth << "5 - Show museum(s) that have artist" << endl;
+		cout << tabDepth << "6 - Return to previous menu" << endl;
+
+		cout << tabDepth << "Selection: ";
+		cin >> selection;
+		cout << endl;
+
+		// new tabDepth after selection
+		tabDepth = "\t\t";
+
+		// variables needed within switch
+		string command;
+		string name;
+		string location;
+		string workName;
+		string artistName;
+		int yearEstab;
+
+		// switch based on user choice
+		switch (selection)
+		{
+		case 1:
+			// get museum info from user
+			cout << tabDepth << "Museum name: ";
+			cin >> name;
+			cout << tabDepth << "Location: ";
+			cin >> location;
+			cout << tabDepth << "Year Established: ";
+			cin >> yearEstab;
+
+			command = "INSERT INTO Museum VALUES FROM (\"" + name + "\", \""
+				+ location + "\", " + to_string(yearEstab) + ");";
+			dbCon.executeCommand(command);
+
+			break;
+		case 2:
+			cout << tabDepth << "Museum name: ";
+			cin >> name;
+
+			command = "DELETE FROM Museum WHERE name == " + name + ";";
+			dbCon.executeCommand(command);
+
+			break;
+		case 3:
+			cout << tabDepth << "Museum name: ";
+			cin >> name;
+			cout << tabDepth << "Work name: "; 
+			cin >> workName;
+
+			command = "INSERT INTO MuseumContains VALUES FROM (\"" + name + "\", \"" + workName + "\");";
+			dbCon.executeCommand(command);
+
+			break;
+		case 4:
+			cout << tabDepth << "Museum name: ";
+			cin >> name;
+
+			command = "tempName <- select (museumName == \"" + name + "\") MuseumContains;";
+			dbCon.executeCommand(command);
+			command = "result <- project (workName) tempName;";
+			dbCon.executeCommand(command);
+			command = "SHOW result;";
+			dbCon.executeCommand(command);
+
+			break;
+		case 5:
+			cout << tabDepth << "Museum name: ";
+			cin >> name;
+			cout << tabDepth << "Artist name: ";
+			cin >> artistName;
+
+			command = "tempName <- select (museumName == \"" + name + "\" && artistName == \"" + artistName + "\") "
+				"(MuseumContains JOIN ArtistWorks);";
+			dbCon.executeCommand(command);
+			command = "result <- project (museumName) tempName;";
+			dbCon.executeCommand(command);
+			command = "SHOW result;";
+			dbCon.executeCommand(command);
+
+			break;
+		case 6:
+			return;
+		default:
+			continue;
+		}
+	}
+}
+
+void worksSelected()
+{
+	int selection = 0;
+
+	while (true)
+	{
+		cout << tabDepth << "Enter the number corresponding to what you want to do." << endl;
+		cout << tabDepth << "1 - Add work" << endl;
+		cout << tabDepth << "2 - Remove work" << endl;
+		cout << tabDepth << "3 - Show works by artist" << endl;
+		cout << tabDepth << "4 - Show works by period" << endl;
+		cout << tabDepth << "5 - Show works in a museum(s)" << endl;
+		cout << tabDepth << "6 - Show works above certain value" << endl;
+		cout << tabDepth << "7 - Return to previous menu" << endl;
+
+		cout << tabDepth << "Selection: ";
+		cin >> selection;
+		cout << endl;
+
+		// new tabDepth after selection
+		tabDepth = "\t\t";
+
+		// variables needed within switch
+		string command;
+		string name;
+		string medium;
+		string periodName;
+		string artistName;
+		string museumName;
+		int year;
+		int value;
+
+		// switch based on user choice
+		switch (selection)
+		{
+		case 1:
+			// get museum info from user
+			cout << tabDepth << "Work name: ";
+			cin >> name;
+			cout << tabDepth << "Medium: ";
+			cin >> medium;
+			cout << tabDepth << "Year Made: ";
+			cin >> year;
+			cout << tabDepth << "Value: ";
+			cin >> value;
+
+			command = "INSERT INTO Museum VALUES FROM (\"" + name + "\", \""
+				+ medium + "\", " + to_string(year) + ", " + to_string(value) + ");";
+			dbCon.executeCommand(command);
+
+			break;
+		case 2:
+			cout << tabDepth << "Work name: ";
+			cin >> name;
+
+			command = "DELETE FROM Museum WHERE name == " + name + ";";
+			dbCon.executeCommand(command);
+
+			break;
+		case 3:
+			cout << tabDepth << "Artist name: ";
+			cin >> artistName;
+
+			command = "tempName <- select (artistName == \"" + artistName + "\") ArtistWorks;";
+			dbCon.executeCommand(command);
+			command = "result <- project (workNames) tempName;";
+			dbCon.executeCommand(command);
+			command = "SHOW result;";
+			dbCon.executeCommand(command);
+
+			break;
+		case 4:
+			cout << tabDepth << "Period name: ";
+			cin >> periodName;
+
+			command = "tempName <- select (periodName == \"" + periodName + "\") PeriodWorks;";
+			dbCon.executeCommand(command);
+			command = "result <- project (workNames) tempName;";
+			dbCon.executeCommand(command);
+			command = "SHOW result;";
+			dbCon.executeCommand(command);
+
+			break;
+		case 5:
+			cout << tabDepth << "Museum name: ";
+			cin >> periodName;
+
+			command = "tempName <- select (museumName == \"" + periodName + "\") MuseumContains;";
+			dbCon.executeCommand(command);
+			command = "result <- project (workNames) tempName;";
+			dbCon.executeCommand(command);
+			command = "SHOW result;";
+			dbCon.executeCommand(command);
+			
+			break;
+		case 6:
+			cout << tabDepth << "Value: ";
+			cin >> value;
+
+			command = "tempName <- select (currentValue > " + to_string(value) + ") Works;";
+			dbCon.executeCommand(command);
+			command = "result <- project (workNames) tempName;";
+			dbCon.executeCommand(command);
+			command = "SHOW result;";
+			dbCon.executeCommand(command);
+
+			break;
+		case 7:
+			return;
+		default:
+			continue;
+		}
+	}
+}
+
 void createTablesForArtistDB()
 {
 	// Artist table
-	string command = "CREATE TABLE Artist (name VARCHAR(30), birthDate VARCHAR(12),"
-		" nationality VARCHAR(20), deathDate VARCHAR(20)) PRIMARY KEY (name);";
+	string command = "CREATE TABLE Artist (name VARCHAR(30), birthYear INTEGER,"
+		" nationality VARCHAR(20), deathYear INTEGER) PRIMARY KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Artist;";
 	dbCon.executeCommand(command);
 
 	// Museum table
 	command = "CREATE TABLE Museum (name VARCHAR(30), location VARCHAR(30),"
-		" dateEstab VARCHAR(12)) PRIMARY KEY (name);";
+		" yearEstab INTEGER) PRIMARY KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Museum;";
 	dbCon.executeCommand(command);
 
 	// Period table
-	command = "CREATE TABLE Period (name VARCHAR(30), date VARCHAR(12)) PRIMARY"
+	command = "CREATE TABLE Period (name VARCHAR(30), year INTEGER) PRIMARY"
 		" KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Period;";
 	dbCon.executeCommand(command);
 
 	// Work table
-	command = "CREATE TABLE Work (name VARCHAR(40), medium VARCHAR(20), dateMade"
-		" VARCHAR(12), currentValue INTEGER) PRIMARY KEY (name);";
+	command = "CREATE TABLE Work (name VARCHAR(40), medium VARCHAR(20), yearMade"
+		" INTEGER, currentValue INTEGER) PRIMARY KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Work;";
 	dbCon.executeCommand(command);
