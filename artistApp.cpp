@@ -15,7 +15,9 @@ DBConnection dbCon;
 
 int main()
 {
-	createTablesForArtistDB();
+	// load table data
+	openAllTables();
+
 	int selection = 0;
 
 	while(true)
@@ -25,7 +27,8 @@ int main()
 		cout << "2 - Museums" << endl;
 		cout << "3 - Periods" << endl;
 		cout << "4 - Works" << endl;
-		cout << "5 - To Exit" << endl;
+		cout << "5 - To Exit and Save" << endl;
+		cout << "6 - To Exit" << endl;
 
 		cout << "Selection: ";
 		cin >> selection;
@@ -53,7 +56,11 @@ int main()
 
 
 				break;
-			case 5:	// To Exit
+			case 5:	// To Exit and Save
+				closeAndSaveAllTables();
+				return 0;
+				break;
+			case 6:	// To Exit
 				return 0;
 			default:
 				continue;
@@ -87,8 +94,8 @@ void artistsSelected()
 		// variables needed within switch
 		string command;
 		string name;
-		string birthDate;
-		string deathDate;
+		int birthDate;
+		int deathDate;
 		string nationality;
 
 		// switch based on user choice
@@ -98,20 +105,20 @@ void artistsSelected()
 				// get artist info from user
 				cout << tabDepth << "Artist name: ";
 				cin >> name;
-				cout << tabDepth << "Date of birth (mm/dd/yyyy): ";
+				cout << tabDepth << "Date of birth (yyyy): ";
 				cin >> birthDate;
-				cout << tabDepth << "Date of death (mm/dd/yyyy): ";
+				cout << tabDepth << "Date of death (yyyy): ";
 				cin >> deathDate;
 				cout << tabDepth << "Artist's nationality: ";
 				cin >> nationality;
 
-				command = "INSERT INTO Artist VALUES FROM (\"" + name + "\", \""
-					+ birthDate + "\", \"" + nationality + "\", \"" + deathDate + "\");";
+				command = "INSERT INTO Artist VALUES FROM (\"" + name + "\", "
+					+ to_string(birthDate) + ", \"" + nationality + "\", "
+					+ to_string(deathDate) + ");";
 				dbCon.executeCommand(command);
-				command = "CLOSE Artist;";
-				dbCon.executeCommand(command);
-				
 
+				cout << command <<endl;
+				tabDepth = "\t";
 				break;
 			case 2:
 
@@ -130,10 +137,47 @@ void artistsSelected()
 	}
 }
 
+void openAllTables()
+{
+	string command = "OPEN Artist;";
+	dbCon.executeCommand(command);
+	command = "OPEN ArtistWorks;";
+	dbCon.executeCommand(command);
+	command = "OPEN Museum;"; 
+	dbCon.executeCommand(command);
+	command = "OPEN MuseumContains;";
+	dbCon.executeCommand(command);
+	command = "OPEN Period;";
+	dbCon.executeCommand(command);
+	command = "OPEN PeriodWorks;";
+	dbCon.executeCommand(command);
+	command = "OPEN Work;";
+	dbCon.executeCommand(command);
+
+}
+
+void closeAndSaveAllTables()
+{
+	string command = "CLOSE Artist;";
+	dbCon.executeCommand(command);
+	command = "CLOSE ArtistWorks;";
+	dbCon.executeCommand(command);
+	command = "CLOSE Museum;"; 
+	dbCon.executeCommand(command);
+	command = "CLOSE MuseumContains;";
+	dbCon.executeCommand(command);
+	command = "CLOSE Period;";
+	dbCon.executeCommand(command);
+	command = "CLOSE PeriodWorks;";
+	dbCon.executeCommand(command);
+	command = "CLOSE Work;";
+	dbCon.executeCommand(command);
+}
+
 void createTablesForArtistDB()
 {
 	// Artist table
-	string command = "CREATE TABLE Artist (name VARCHAR(30), birthDate VARCHAR(12),"
+	string command = "CREATE TABLE Artist (name VARCHAR(30), birthDate INTEGER,"
 		" nationality VARCHAR(20), deathDate VARCHAR(20)) PRIMARY KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Artist;";
@@ -141,13 +185,13 @@ void createTablesForArtistDB()
 
 	// Museum table
 	command = "CREATE TABLE Museum (name VARCHAR(30), location VARCHAR(30),"
-		" dateEstab VARCHAR(12)) PRIMARY KEY (name);";
+		" dateEstab INTEGER) PRIMARY KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Museum;";
 	dbCon.executeCommand(command);
 
 	// Period table
-	command = "CREATE TABLE Period (name VARCHAR(30), date VARCHAR(12)) PRIMARY"
+	command = "CREATE TABLE Period (name VARCHAR(30), date INTEGER) PRIMARY"
 		" KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Period;";
@@ -155,7 +199,7 @@ void createTablesForArtistDB()
 
 	// Work table
 	command = "CREATE TABLE Work (name VARCHAR(40), medium VARCHAR(20), dateMade"
-		" VARCHAR(12), currentValue INTEGER) PRIMARY KEY (name);";
+		" INTEGER, currentValue INTEGER) PRIMARY KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Work;";
 	dbCon.executeCommand(command);
