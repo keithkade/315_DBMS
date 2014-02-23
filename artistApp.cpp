@@ -39,14 +39,13 @@ int main()
 		cout << "6 - To Exit" << endl;
 
 		cout << "Selection: ";
-		//cin >> selection;
-		getline(cin, selectionStr);
+		getline(cin, selectionStr); //we use getline for all input because using both getline and cin causes problems
+		selection = atoi(selectionStr.c_str());
 		cout << endl;
 
 		// new tabDepth after selection
 		tabDepth = "\t";
 
-		selection = atoi(selectionStr.c_str());
 		// switch based on user choice
 		switch(selection)
 		{
@@ -111,6 +110,7 @@ void artistsSelected()
 
 		cout << tabDepth << "Selection: ";
 		getline(cin, selectionStr);
+		selection = atoi(selectionStr.c_str());
 		cout << endl;
 
 		// new tabDepth after selection
@@ -123,7 +123,6 @@ void artistsSelected()
 		string deathYear;
 		string nationality;
 
-		selection = atoi(selectionStr.c_str());
 		// switch based on user choice
 		switch(selection)
 		{
@@ -151,7 +150,7 @@ void artistsSelected()
 				cout << tabDepth << "Removing an artist\n" << endl;
 
 				cout << tabDepth << "Artist name: ";
-				cin >> name;
+				getline(cin, name);
 
 				command = "DELETE FROM Artist WHERE (name == \"" + name + "\");";
 				dbCon.executeCommand(command);
@@ -168,11 +167,11 @@ void artistsSelected()
 				cout << tabDepth << "Updating artist's year of death\n" << endl;
 
 				cout << tabDepth << "Artist name: ";
-				cin >> name;
+				getline(cin, name);
 				cout << tabDepth << "Year of death: ";
-				cin >> deathYear;
+				getline(cin, deathYear);
 
-				command = "UPDATE Artist SET deathYear == " + to_string(deathYear)
+				command = "UPDATE Artist SET deathYear == " + deathYear
 					+ " WHERE (name == \"" + name + "\");";
 				dbCon.executeCommand(command);
 				
@@ -189,6 +188,7 @@ void artistsSelected()
 
 void showForArtists()
 {
+	string selectionStr;
 	int selection = 0;
 	while(true)
 	{
@@ -200,7 +200,8 @@ void showForArtists()
 		cout << tabDepth << "5 - Return to previous menu" << endl;
 
 		cout << tabDepth << "Selection: ";
-		cin >> selection;
+		getline(cin, selectionStr);
+		selection = atoi(selectionStr.c_str());
 		cout << endl;
 
 		// new tabDepth after selection
@@ -223,7 +224,7 @@ void showForArtists()
 				cout << tabDepth << "Artists in a museum\n" << endl;
 
 				cout << tabDepth << "Museum name: ";
-				cin >> name;
+				getline(cin, name);
 
 				// using cross product here instead of natural join because we have to use it somewhere!
 				command = "crossProduct <- MuseumContains * ArtistWorks;";
@@ -244,7 +245,7 @@ void showForArtists()
 				cout << tabDepth << "Artists not in a museum\n" << endl;
 
 				cout << tabDepth << "Museum name: ";
-				cin >> name;
+				getline(cin, name);
 
 				command = "commonWorkJoin <- MuseumContains JOIN ArtistWorks;";
 				dbCon.executeCommand(command);
@@ -320,8 +321,8 @@ void closeAndSaveAllTables()
 
 void museumsSelected()
 {
+	string selectionStr;
 	int selection = 0;
-
 	while (true)
 	{
 		cout << tabDepth << "Enter the number corresponding to what you want to do." << endl;
@@ -333,7 +334,8 @@ void museumsSelected()
 		cout << tabDepth << "6 - Return to previous menu" << endl;
 
 		cout << tabDepth << "Selection: ";
-		cin >> selection;
+		getline(cin, selectionStr); 
+		selection = atoi(selectionStr.c_str());
 		cout << endl;
 
 		// new tabDepth after selection
@@ -345,7 +347,7 @@ void museumsSelected()
 		string location;
 		string workName;
 		string artistName;
-		int yearEstab;
+		string yearEstab;
 
 		// switch based on user choice
 		switch (selection)
@@ -353,20 +355,20 @@ void museumsSelected()
 		case 1:
 			// get museum info from user
 			cout << tabDepth << "Museum name: ";
-			cin >> name;
+			getline(cin, name);
 			cout << tabDepth << "Location: ";
-			cin >> location;
+			getline(cin, location);
 			cout << tabDepth << "Year Established: ";
-			cin >> yearEstab;
+			getline(cin, yearEstab);
 
 			command = "INSERT INTO Museum VALUES FROM (\"" + name + "\", \""
-				+ location + "\", " + to_string(yearEstab) + ");";
+				+ location + "\", " + yearEstab + ");";
 			dbCon.executeCommand(command);
 
 			break;
 		case 2:
 			cout << tabDepth << "Museum name: ";
-			cin >> name;
+			getline(cin, name);
 
 			command = "DELETE FROM Museum WHERE name == " + name + ";";
 			dbCon.executeCommand(command);
@@ -374,9 +376,9 @@ void museumsSelected()
 			break;
 		case 3:
 			cout << tabDepth << "Museum name: ";
-			cin >> name;
+			getline(cin, name);
 			cout << tabDepth << "Work name: "; 
-			cin >> workName;
+			getline(cin, workName);
 
 			command = "INSERT INTO MuseumContains VALUES FROM (\"" + name + "\", \"" + workName + "\");";
 			dbCon.executeCommand(command);
@@ -384,7 +386,7 @@ void museumsSelected()
 			break;
 		case 4:
 			cout << tabDepth << "Museum name: ";
-			cin >> name;
+			getline(cin, name);
 
 			command = "tempName <- select (museumName == \"" + name + "\") MuseumContains;";
 			dbCon.executeCommand(command);
@@ -396,9 +398,9 @@ void museumsSelected()
 			break;
 		case 5:
 			cout << tabDepth << "Museum name: ";
-			cin >> name;
+			getline(cin, name);
 			cout << tabDepth << "Artist name: ";
-			cin >> artistName;
+			getline(cin, artistName);
 
 			command = "tempName <- select (museumName == \"" + name + "\" && artistName == \"" + artistName + "\") "
 				"(MuseumContains JOIN ArtistWorks);";
@@ -419,6 +421,7 @@ void museumsSelected()
 
 void worksSelected()
 {
+	string selectionStr;
 	int selection = 0;
 
 	while (true)
@@ -433,7 +436,8 @@ void worksSelected()
 		cout << tabDepth << "7 - Return to previous menu" << endl;
 
 		cout << tabDepth << "Selection: ";
-		cin >> selection;
+		getline(cin, selectionStr);
+		selection = atoi(selectionStr.c_str());
 		cout << endl;
 
 		// new tabDepth after selection
@@ -446,8 +450,8 @@ void worksSelected()
 		string periodName;
 		string artistName;
 		string museumName;
-		int year;
-		int value;
+		string year;
+		string value;
 
 		// switch based on user choice
 		switch (selection)
@@ -455,22 +459,22 @@ void worksSelected()
 		case 1:
 			// get museum info from user
 			cout << tabDepth << "Work name: ";
-			cin >> name;
+			getline(cin, name);
 			cout << tabDepth << "Medium: ";
-			cin >> medium;
+			getline(cin, medium);
 			cout << tabDepth << "Year Made: ";
-			cin >> year;
+			getline(cin, year);
 			cout << tabDepth << "Value: ";
-			cin >> value;
+			getline(cin, value);
 
 			command = "INSERT INTO Museum VALUES FROM (\"" + name + "\", \""
-				+ medium + "\", " + to_string(year) + ", " + to_string(value) + ");";
+				+ medium + "\", " + year + ", " + value + ");";
 			dbCon.executeCommand(command);
 
 			break;
 		case 2:
 			cout << tabDepth << "Work name: ";
-			cin >> name;
+			getline(cin, name);
 
 			command = "DELETE FROM Museum WHERE name == " + name + ";";
 			dbCon.executeCommand(command);
@@ -478,7 +482,7 @@ void worksSelected()
 			break;
 		case 3:
 			cout << tabDepth << "Artist name: ";
-			cin >> artistName;
+			getline(cin, artistName);
 
 			command = "tempName <- select (artistName == \"" + artistName + "\") ArtistWorks;";
 			dbCon.executeCommand(command);
@@ -490,7 +494,7 @@ void worksSelected()
 			break;
 		case 4:
 			cout << tabDepth << "Period name: ";
-			cin >> periodName;
+			getline(cin, periodName);
 
 			command = "tempName <- select (periodName == \"" + periodName + "\") PeriodWorks;";
 			dbCon.executeCommand(command);
@@ -502,7 +506,7 @@ void worksSelected()
 			break;
 		case 5:
 			cout << tabDepth << "Museum name: ";
-			cin >> periodName;
+			getline(cin, periodName);
 
 			command = "tempName <- select (museumName == \"" + periodName + "\") MuseumContains;";
 			dbCon.executeCommand(command);
@@ -514,9 +518,9 @@ void worksSelected()
 			break;
 		case 6:
 			cout << tabDepth << "Value: ";
-			cin >> value;
+			getline(cin, value);
 
-			command = "tempName <- select (currentValue > " + to_string(value) + ") Works;";
+			command = "tempName <- select (currentValue > " + value + ") Works;";
 			dbCon.executeCommand(command);
 			command = "result <- project (workNames) tempName;";
 			dbCon.executeCommand(command);
