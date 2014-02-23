@@ -17,7 +17,7 @@ DBConnection dbCon;
 int main()
 {
 	// load table data if they exists
-	if (exists("Artists.db")){
+	if (exists("Artist.db")){
 		openAllTables();
 	}
 	//create table data if this is first time running
@@ -25,6 +25,7 @@ int main()
 		createTablesForArtistDB();
 	}
 
+	string selectionStr;
 	int selection = 0;
 
 	while(true)
@@ -38,12 +39,14 @@ int main()
 		cout << "6 - To Exit" << endl;
 
 		cout << "Selection: ";
-		cin >> selection;
+		//cin >> selection;
+		getline(cin, selectionStr);
 		cout << endl;
 
 		// new tabDepth after selection
 		tabDepth = "\t";
 
+		selection = atoi(selectionStr.c_str());
 		// switch based on user choice
 		switch(selection)
 		{
@@ -94,6 +97,7 @@ bool exists(string filePath)
 
 void artistsSelected()
 {
+	string selectionStr;
 	int selection = 0;
 
 	while(true)
@@ -106,7 +110,7 @@ void artistsSelected()
 		cout << tabDepth << "5 - Return to previous menu" << endl;
 
 		cout << tabDepth << "Selection: ";
-		cin >> selection;
+		getline(cin, selectionStr);
 		cout << endl;
 
 		// new tabDepth after selection
@@ -115,10 +119,11 @@ void artistsSelected()
 		// variables needed within switch
 		string command;
 		string name;
-		int birthYear;
-		int deathYear;
+		string birthYear;
+		string deathYear;
 		string nationality;
 
+		selection = atoi(selectionStr.c_str());
 		// switch based on user choice
 		switch(selection)
 		{
@@ -126,17 +131,17 @@ void artistsSelected()
 				cout << tabDepth << "Adding an artist\n" << endl;
 
 				cout << tabDepth << "Artist name: ";
-				cin >> name;
+				getline(cin, name);
 				cout << tabDepth << "Year of birth: ";
-				cin >> birthYear;
+				getline(cin, birthYear);
 				cout << tabDepth << "Year of death: ";
-				cin >> deathYear;
+				getline(cin, deathYear);
 				cout << tabDepth << "Artist's nationality: ";
-				cin >> nationality;
+				getline(cin, nationality);
 
 				command = "INSERT INTO Artist VALUES FROM (\"" + name + "\", "
-					+ to_string(birthYear) + ", \"" + nationality + "\", "
-					+ to_string(deathYear) + ");";
+					+ birthYear + ", \"" + nationality + "\", "
+					+ deathYear + ");";
 				dbCon.executeCommand(command);
 
 				cout << endl;
