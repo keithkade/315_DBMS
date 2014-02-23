@@ -400,7 +400,6 @@ void createTablesForArtistDB()
 {
 	// Artist table
 	string command = "CREATE TABLE Artist (name VARCHAR(30), birthYear INTEGER,"
-		" nationality VARCHAR(20), deathYear VARCHAR(20)) PRIMARY KEY (name);";
 		" nationality VARCHAR(20), deathYear INTEGER) PRIMARY KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Artist;";

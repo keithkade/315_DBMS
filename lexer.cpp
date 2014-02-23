@@ -160,6 +160,22 @@ vector<Token> afterAssignQueryLex(string line){
 			stringPos++; //skip over next char since we have accounted for it
 		}
 
+		else if (curChar == '!'){
+			makeCommVarTok(afterRetVecter, curString);
+			curString = "";
+			//can be > or >=
+			if (line[stringPos + 1] == '='){
+				Token greatEqTok(Token::tokenType::SYMBOL);
+				greatEqTok.content = "!=";
+				afterRetVecter.push_back(greatEqTok);
+			}
+			else {
+				cout << "ERROR when parsing a !" << endl;
+				return emptyRetVecter;
+			}
+			stringPos++; //skip over next char since we have accounted for it
+		}
+
 		else if (curChar == '='){
 			makeCommVarTok(afterRetVecter, curString);
 			curString = "";
