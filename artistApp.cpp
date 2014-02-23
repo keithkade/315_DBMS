@@ -145,7 +145,6 @@ void artistsSelected()
 	}
 }
 
-<<<<<<< HEAD
 void openAllTables()
 {
 	string command = "OPEN Artist;";
@@ -181,7 +180,8 @@ void closeAndSaveAllTables()
 	dbCon.executeCommand(command);
 	command = "CLOSE Work;";
 	dbCon.executeCommand(command);
-=======
+}
+
 void museumsSelected()
 {
 	int selection = 0;
@@ -394,18 +394,14 @@ void worksSelected()
 			continue;
 		}
 	}
->>>>>>> cff6712c1d0dccf4762dd3e362da267774a2c7f0
 }
 
 void createTablesForArtistDB()
 {
 	// Artist table
 	string command = "CREATE TABLE Artist (name VARCHAR(30), birthYear INTEGER,"
-<<<<<<< HEAD
 		" nationality VARCHAR(20), deathYear VARCHAR(20)) PRIMARY KEY (name);";
-=======
 		" nationality VARCHAR(20), deathYear INTEGER) PRIMARY KEY (name);";
->>>>>>> cff6712c1d0dccf4762dd3e362da267774a2c7f0
 	dbCon.executeCommand(command);
 	command = "WRITE Artist;";
 	dbCon.executeCommand(command);
@@ -418,11 +414,7 @@ void createTablesForArtistDB()
 	dbCon.executeCommand(command);
 
 	// Period table
-<<<<<<< HEAD
 	command = "CREATE TABLE Period (name VARCHAR(30), Year INTEGER) PRIMARY"
-=======
-	command = "CREATE TABLE Period (name VARCHAR(30), year INTEGER) PRIMARY"
->>>>>>> cff6712c1d0dccf4762dd3e362da267774a2c7f0
 		" KEY (name);";
 	dbCon.executeCommand(command);
 	command = "WRITE Period;";
