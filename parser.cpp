@@ -796,10 +796,12 @@ void Parser::create(vector<Token>& tokens)
 		iter++;
 	}
 
+	printTokenList(typedAtribTokens);
+	printTokenList(atribTokens);
+
 	vector<string> typedAtribs = typedAttributeList(typedAtribTokens);
 	vector<string> primaryKeys = attributeList(atribTokens);
 	
-	/*
 	for (int i = 0; i < typedAtribs.size(); i++)
 		cout << typedAtribs[i] << " ";
 	cout << "\n";
@@ -808,7 +810,6 @@ void Parser::create(vector<Token>& tokens)
 	for (int i = 0; i < primaryKeys.size(); i++)
 		cout << primaryKeys[i] << " ";
 	cout << "\n";
-	*/
 
 	rdbms->createTable(tableName, typedAtribs, primaryKeys);
 }
@@ -826,17 +827,19 @@ void Parser::update(vector<Token>& tokens)
 	{
 		varNames.push_back(iter->content);
 		Datum newVal;
-		if (isNum((iter + 2)->content))
+		if ((iter + 2)->content[0] == '\"')
+		{
+			(iter + 2)->content.erase((iter + 2)->content.begin());
+			(iter + 2)->content.pop_back();
+			newVals.push_back(Datum((iter + 2)->content));
+		}
+		else
 		{
 			istringstream buffer((iter + 2)->content);
 			int numContent;
 			buffer >> numContent;
 
 			newVals.push_back(Datum(numContent));
-		}
-		else
-		{
-			newVals.push_back(Datum((iter + 2)->content));
 		}
 
 		if ((iter + 3)->content.compare("WHERE") == 0)
@@ -873,16 +876,18 @@ void Parser::insert(vector<Token>& tokens)
 		vector<Datum> info;
 		while (iter != tokens.end())
 		{
-			if (isNum(iter->content))
+			if (iter->content[0] == '\"')
 			{
+				iter->content.erase(iter->content.begin());
+				iter->content.pop_back();
+				info.push_back(Datum(iter->content));
+			}
+			else{
 				istringstream buffer(iter->content);
 				int numContent;
 				buffer >> numContent;
 				
 				info.push_back(Datum(numContent));
-			}
-			else{
-				info.push_back(Datum(iter->content));
 			}
 			iter = iter + 2;
 		}
@@ -962,7 +967,7 @@ void Parser::command(vector<Token>& tokens)
 
 bool Parser::isNum(string input)
 {
-	for (int i = 0; input.length(); i++)
+	for (int i = 0; i < input.length(); i++)
 	{
 		if (!isdigit(input[i]))
 			return false;
@@ -971,7 +976,7 @@ bool Parser::isNum(string input)
 	return true;
 }
 
-void Parser::printTokenList(vector<Token> tokens)
+void Parser::printTokenList(vector<Token>& tokens)
 {
 	cout << "\n";
 	for (int i = 0; i < tokens.size(); i++)
