@@ -80,7 +80,7 @@ class Parser{
 	 bool isNum(string input);
 
 	 // for debugging
-	 void printTokenList(vector<Token> tokens);
+	 void printTokenList(vector<Token>& tokens);
 	 
 
 public:
