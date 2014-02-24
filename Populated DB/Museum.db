@@ -1,0 +1,3 @@
+CREATE TABLE Museum (name VARCHAR(30), location VARCHAR(30), yearEstab INTEGER) PRIMARY KEY (name);
+INSERT INTO Museum VALUES FROM ("MOMA", "New York", 1929);
+INSERT INTO Museum VALUES FROM ("Art Institute of Chicago", "Chicago", 1879);

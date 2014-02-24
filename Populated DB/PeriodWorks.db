@@ -1,0 +1,2 @@
+CREATE TABLE PeriodWorks (periodName VARCHAR(30), workName VARCHAR(40)) PRIMARY KEY (periodName, workName);
+INSERT INTO PeriodWorks VALUES FROM ("Expressionism", "The Old Guitarist");

@@ -436,7 +436,7 @@ vector<Token> commandLex(string line){
 			}
 			else {
 				cout << "ERROR when parsing a =" << endl;
-				return retRow;
+				break;
 			}
 		}
 
