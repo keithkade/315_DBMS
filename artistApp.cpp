@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <Windows.h>
 
 #include "artistApp.h"
 #include "rdbms.h"
@@ -16,6 +17,8 @@ DBConnection dbCon;
 
 int main()
 {
+	setWindow(150, 50);
+
 	// load table data if they exists
 	if (exists("Artist.db")){
 		openAllTables();
@@ -587,3 +590,20 @@ void createTablesForArtistDB()
 	command = "WRITE PeriodWorks;";
 	dbCon.executeCommand(command);
 }
+
+void setWindow(int width, int height) 
+{ 
+    _COORD coord; 
+    coord.X = width; 
+    coord.Y = height; 
+
+    _SMALL_RECT Rect; 
+    Rect.Top = 0; 
+    Rect.Left = 0; 
+    Rect.Bottom = height - 1; 
+    Rect.Right = width - 1; 
+
+    HANDLE Handle = GetStdHandle(STD_OUTPUT_HANDLE);      // Get Handle 
+    SetConsoleScreenBufferSize(Handle, coord);            // Set Buffer Size 
+    SetConsoleWindowInfo(Handle, TRUE, &Rect);            // Set Window Size 
+} 

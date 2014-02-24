@@ -27,3 +27,5 @@ void createTablesForArtistDB();
 
 //returns whether a file exists
 bool exists(std::string filePath);
+
+void setWindow(int width, int height);

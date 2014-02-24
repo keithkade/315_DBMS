@@ -307,32 +307,30 @@ bool Table::duplicateExists(const vector<Datum>& newRow){
 }
 	
 void Table::printTable(){
-
-	int width = 25;
 	cout << left;
 	cout << "---------------------------------------------------------" 
-		"--------------------" << endl;
+		"----------------------------------------" << endl;
 	string tempAtt = "";
 	for (int i = 0; i < attributeNames.size(); i++){
 		tempAtt = attributeNames[i];
 		transform(tempAtt.begin(), tempAtt.end(), tempAtt.begin(), toupper);
-		cout << setw(width) << tempAtt;
+		cout << setw(30) << tempAtt;
 	}
 
 	cout << endl;
 	for (int i = 0; i<data.size(); i++){
 		for (int j = 0; j<attributeNames.size(); j++){
 			if (data[i][j].numData == -999){
-				cout << setw(width) << data[i][j].stringData;
+				cout << setw(30) << data[i][j].stringData;
 			}
 			else{
-				cout << setw(width) << data[i][j].numData;
+				cout << setw(30) << data[i][j].numData;
 			}
 		}
 		cout << endl;
 	}
 	cout << "---------------------------------------------------------"
-		"--------------------\n" << endl;
+		"----------------------------------------\n" << endl;
 }
 
 
