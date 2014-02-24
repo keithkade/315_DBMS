@@ -294,13 +294,11 @@ void showForArtists()
 				command = "artistRenamed <- project (name) Artist;";
 				dbCon.executeCommand(command);
 
-				command = "artistsNotIn <- Artist - artistsIn;";
+				command = "artistsNotIn <- artistRenamed - artistsIn;";
 				dbCon.executeCommand(command);
 
-				test = dbCon.getTempTable("artistsNotIn");
-
 				cout << tabDepth << "List of artists\n" << endl;
-				command = "SHOW artistsNotIN;";
+				command = "SHOW artistsNotIn;";
 				dbCon.executeCommand(command);
 
 				tabDepth = "\t\t";
@@ -309,6 +307,9 @@ void showForArtists()
 				cout << tabDepth << "List of artist nationalities\n" << endl;
 
 				command = "artistNationalities <- project (name, nationality) Artist;";
+				dbCon.executeCommand(command);
+
+				command = "SHOW artistNationalities;";
 				dbCon.executeCommand(command);
 
 				tabDepth = "\t\t";
