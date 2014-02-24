@@ -475,6 +475,8 @@ void worksSelected()
 		string museumName;
 		string year;
 		string value;
+		
+		Table test;
 
 		// switch based on user choice
 		switch (selection)
@@ -519,8 +521,10 @@ void worksSelected()
 
 			command = "tempName <- select (artistName == \"" + artistName + "\") ArtistWorks;";
 			dbCon.executeCommand(command);
+			test = dbCon.getTempTable("tempName");
 			command = "result <- project (workNames) tempName;";
 			dbCon.executeCommand(command);
+			test = dbCon.getTempTable("result");
 			command = "SHOW result;";
 			dbCon.executeCommand(command);
 
@@ -538,10 +542,11 @@ void worksSelected()
 
 			break;
 		case 5:
+			//add support for multiple museuems so we can use unions
 			cout << tabDepth << "Museum name: ";
-			getline(cin, periodName);
+			getline(cin, museumName);
 
-			command = "tempName <- select (museumName == \"" + periodName + "\") MuseumContains;";
+			command = "tempName <- select (museumName == \"" + museumName + "\") MuseumContains;";
 			dbCon.executeCommand(command);
 			command = "result <- project (workNames) tempName;";
 			dbCon.executeCommand(command);
@@ -570,9 +575,6 @@ void worksSelected()
 }
 
 void periodsSelected(){
-	//Add
-	//Delete
-	//Show all
 
 	string selectionStr;
 	int selection = 0;

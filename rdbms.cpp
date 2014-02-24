@@ -266,7 +266,6 @@ Table Table::naturalJoinWith(const Table& paramTable){
 Table Table::selectFromTable(Table selectTable, ConditionNode condition){
 	Table retTable(selectTable.attributeNames, selectTable.keyNames);
 
-
 	// Begin iterating from end so that removes don't change position of any data we have yet to look at.
 	vector<vector<Datum> >::iterator it;
 	it = selectTable.data.end();
@@ -413,7 +412,6 @@ void Database::updateTable(const string& tableName, const vector<string>& attrib
 
 Table Database::selectFromTable(const string& tableName, ConditionNode condition){
 	Table retTable(allTables[tableName].attributeNames, allTables[tableName].keyNames);
-
 
 	// Begin iterating from end so that removes don't change position of any data we have yet to look at.
 	vector<vector<Datum> >::iterator it;
