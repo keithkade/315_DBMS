@@ -15,6 +15,8 @@ string tabDepth = "";
 // database wrapper needed globally
 DBConnection dbCon;
 
+Table test;
+
 int main()
 {
 	setWindow(150, 50);
@@ -188,7 +190,7 @@ void artistsSelected()
 				cout << tabDepth << "Year of death: ";
 				getline(cin, deathYear);
 
-				if (!isNum(birthYear)){
+				if (!isNum(deathYear)){
 					cout << tabDepth << "ERROR: Invalid year" << endl << endl;
 					break;
 				}
@@ -252,11 +254,17 @@ void showForArtists()
 				command = "crossProduct <- MuseumContains * ArtistWorks;";
 				dbCon.executeCommand(command);
 
+				test = dbCon.getTempTable("crossProduct");
+
 				command = "correctMuseum <- select (museumName == \"" + name + "\") crossProduct;";
 				dbCon.executeCommand(command);
 
+				test = dbCon.getTempTable("correctMuseum");
+
 				command = "artistNames <- project (artistName) correctMuseum;";
 				dbCon.executeCommand(command);
+
+				test = dbCon.getTempTable("artistNames");
 
 				command = "SHOW artistNames;";
 				dbCon.executeCommand(command);
@@ -271,16 +279,24 @@ void showForArtists()
 
 				command = "commonWorkJoin <- MuseumContains JOIN ArtistWorks;";
 				dbCon.executeCommand(command);
+				
+				test = dbCon.getTempTable("commonWorkJoin");
 
 				command = "correctMuseum <- select (museumName == \"" + name + "\") commonWorkJoin;";
 				dbCon.executeCommand(command);
+
+				test = dbCon.getTempTable("correctMuseum");
 
 				// these are all the artists in a museum
 				command = "artistsIn <- project (artistName) correctMuseum;";
 				dbCon.executeCommand(command);
 
+				test = dbCon.getTempTable("artistsIn");
+
 				command = "artistsNotIn <- Artist - artistsIn;";
 				dbCon.executeCommand(command);
+
+				test = dbCon.getTempTable("artistsNotIn");
 
 				cout << tabDepth << "List of artists\n" << endl;
 				command = "SHOW artistsNotIN;";
@@ -479,8 +495,6 @@ void worksSelected()
 		string museumName;
 		string year;
 		string value;
-		
-		Table test;
 
 		// switch based on user choice
 		switch (selection)
@@ -525,10 +539,8 @@ void worksSelected()
 
 			command = "tempName <- select (artistName == \"" + artistName + "\") ArtistWorks;";
 			dbCon.executeCommand(command);
-			test = dbCon.getTempTable("tempName");
 			command = "result <- project (workName) tempName;";
 			dbCon.executeCommand(command);
-			test = dbCon.getTempTable("result");
 			command = "SHOW result;";
 			dbCon.executeCommand(command);
 

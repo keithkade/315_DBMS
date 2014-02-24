@@ -26,6 +26,10 @@ void makeCommVarTok(vector<Token> & afterRetVecter, string in){
 	else if (in == ""){
 		return;
 	}
+	//and that empty spaces are ignored
+	else if (in == " "){
+		return;
+	}
 	else if (isNumLiteral(in)){
 		Token numLiteralTok(Token::tokenType::LITERAL);
 		numLiteralTok.content = in;
@@ -49,6 +53,12 @@ vector<Token> afterAssignQueryLex(string line){
 
 	while (stringPos <= line.size()){
 		char curChar = line[stringPos];
+
+		
+		if (curChar == ' '){
+			makeCommVarTok(afterRetVecter, curString);
+			curString = "";
+		}
 
 		//needed to get the last token in the string
 		if (stringPos == line.size()){

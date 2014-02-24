@@ -11,8 +11,8 @@ class Parser;
 //this is what will be used by our application to interface a database
 //this will also handle the DML command line interface
 class DBConnection{
-	Database db;
 	Parser par;
+	Database db;
 
 public:
 
