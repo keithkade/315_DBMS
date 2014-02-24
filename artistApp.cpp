@@ -15,6 +15,8 @@ string tabDepth = "";
 // database wrapper needed globally
 DBConnection dbCon;
 
+Table test;
+
 int main()
 {
 	setWindow(150, 50);
@@ -140,13 +142,17 @@ void artistsSelected()
 				getline(cin, name);
 				cout << tabDepth << "Year of birth: ";
 				getline(cin, birthYear);
-				cout << tabDepth << "Year of death: ";
+				cout << tabDepth << "(If the artist is still living enter NA)\n" << tabDepth << "Year of death: ";
 				getline(cin, deathYear);
+				//we set the year of still living artists to 0. This value is later recognized as significant in printtable
+				if (deathYear == "NA"){
+					deathYear = "0";
+				}
 				cout << tabDepth << "Artist's nationality: ";
 				getline(cin, nationality);
 
 				//check that year inputs are numeric
-				if (!isNum(birthYear) || !isNum(birthYear)){
+				if (!isNum(birthYear) || !isNum(deathYear)){
 					cout << tabDepth << "ERROR: Invalid year" << endl << endl;
 					break;
 				}
@@ -184,7 +190,7 @@ void artistsSelected()
 				cout << tabDepth << "Year of death: ";
 				getline(cin, deathYear);
 
-				if (!isNum(birthYear)){
+				if (!isNum(deathYear)){
 					cout << tabDepth << "ERROR: Invalid year" << endl << endl;
 					break;
 				}
@@ -248,11 +254,17 @@ void showForArtists()
 				command = "crossProduct <- MuseumContains * ArtistWorks;";
 				dbCon.executeCommand(command);
 
+				test = dbCon.getTempTable("crossProduct");
+
 				command = "correctMuseum <- select (museumName == \"" + name + "\") crossProduct;";
 				dbCon.executeCommand(command);
 
+				test = dbCon.getTempTable("correctMuseum");
+
 				command = "artistNames <- project (artistName) correctMuseum;";
 				dbCon.executeCommand(command);
+
+				test = dbCon.getTempTable("artistNames");
 
 				command = "SHOW artistNames;";
 				dbCon.executeCommand(command);
@@ -267,9 +279,13 @@ void showForArtists()
 
 				command = "commonWorkJoin <- MuseumContains JOIN ArtistWorks;";
 				dbCon.executeCommand(command);
+				
+				test = dbCon.getTempTable("commonWorkJoin");
 
 				command = "correctMuseum <- select (museumName == \"" + name + "\") commonWorkJoin;";
 				dbCon.executeCommand(command);
+
+				test = dbCon.getTempTable("correctMuseum");
 
 				// these are all the artists in a museum
 				command = "artistsIn <- rename (name) (project (artistName) correctMuseum;)";
@@ -278,8 +294,10 @@ void showForArtists()
 				command = "artistRenamed <- project (name) Artist;";
 				dbCon.executeCommand(command);
 
-				command = "artistsNotIn <- artistRenamed - artistsIn;";
+				command = "artistsNotIn <- Artist - artistsIn;";
 				dbCon.executeCommand(command);
+
+				test = dbCon.getTempTable("artistsNotIn");
 
 				cout << tabDepth << "List of artists\n" << endl;
 				command = "SHOW artistsNotIN;";
@@ -535,19 +553,20 @@ void worksSelected()
 
 			command = "tempName <- select (periodName == \"" + periodName + "\") PeriodWorks;";
 			dbCon.executeCommand(command);
-			command = "result <- project (workNames) tempName;";
+			command = "result <- project (workName) tempName;";
 			dbCon.executeCommand(command);
 			command = "SHOW result;";
 			dbCon.executeCommand(command);
 
 			break;
 		case 5:
+			//add support for multiple museuems so we can use unions
 			cout << tabDepth << "Museum name: ";
-			getline(cin, periodName);
+			getline(cin, museumName);
 
-			command = "tempName <- select (museumName == \"" + periodName + "\") MuseumContains;";
+			command = "tempName <- select (museumName == \"" + museumName + "\") MuseumContains;";
 			dbCon.executeCommand(command);
-			command = "result <- project (workNames) tempName;";
+			command = "result <- project (workName) tempName;";
 			dbCon.executeCommand(command);
 			command = "SHOW result;";
 			dbCon.executeCommand(command);
@@ -559,7 +578,7 @@ void worksSelected()
 
 			command = "tempName <- select (currentValue > " + value + ") Works;";
 			dbCon.executeCommand(command);
-			command = "result <- project (workNames) tempName;";
+			command = "result <- project (workName) tempName;";
 			dbCon.executeCommand(command);
 			command = "SHOW result;";
 			dbCon.executeCommand(command);
@@ -574,9 +593,6 @@ void worksSelected()
 }
 
 void periodsSelected(){
-	//Add
-	//Delete
-	//Show all
 
 	string selectionStr;
 	int selection = 0;
