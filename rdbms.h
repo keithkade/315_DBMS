@@ -69,7 +69,7 @@ struct Table{
 	//returns true if there is already a row with the the same primary key as the row argument
 	bool duplicateExists(const std::vector<Datum>& newRow);
 
-	//for testing and debugging
+	//outputs the table to the command line
 	void printTable();
 };
 

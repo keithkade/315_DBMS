@@ -140,13 +140,17 @@ void artistsSelected()
 				getline(cin, name);
 				cout << tabDepth << "Year of birth: ";
 				getline(cin, birthYear);
-				cout << tabDepth << "Year of death: ";
+				cout << tabDepth << "(If the artist is still living enter NA)\n" << tabDepth << "Year of death: ";
 				getline(cin, deathYear);
+				//we set the year of still living artists to 0. This value is later recognized as significant in printtable
+				if (deathYear == "NA"){
+					deathYear = "0";
+				}
 				cout << tabDepth << "Artist's nationality: ";
 				getline(cin, nationality);
 
 				//check that year inputs are numeric
-				if (!isNum(birthYear) || !isNum(birthYear)){
+				if (!isNum(birthYear) || !isNum(deathYear)){
 					cout << tabDepth << "ERROR: Invalid year" << endl << endl;
 					break;
 				}
