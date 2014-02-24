@@ -25,7 +25,10 @@ void worksSelected();
 // After one use it should be commented out otherwise it will overwrite table data
 void createTablesForArtistDB();
 
-//returns whether a file exists
+//check whether a file exists
 bool exists(std::string filePath);
+
+//check if a string is numeric
+bool isNum(std::string& input);
 
 void setWindow(int width, int height);

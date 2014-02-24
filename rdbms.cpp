@@ -320,6 +320,7 @@ void Table::printTable(){
 	cout << endl;
 	for (int i = 0; i<data.size(); i++){
 		for (int j = 0; j<attributeNames.size(); j++){
+			vector<Datum> row = data[i];
 			if (data[i][j].numData == -999){
 				cout << setw(30) << data[i][j].stringData;
 			}

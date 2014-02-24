@@ -82,6 +82,9 @@ int main()
 	getchar();
 }
 
+bool isNum(string& input) {
+	return all_of(input.begin(), input.end(), ::isdigit);
+}
 
 bool exists(string filePath)
 {
@@ -141,6 +144,12 @@ void artistsSelected()
 				cout << tabDepth << "Artist's nationality: ";
 				getline(cin, nationality);
 
+				//check that year inputs are numeric
+				if (!isNum(birthYear) || !isNum(birthYear)){
+					cout << tabDepth << "ERROR: Invalid year" << endl << endl;
+					break;
+				}
+
 				command = "INSERT INTO Artist VALUES FROM (\"" + name + "\", "
 					+ birthYear + ", \"" + nationality + "\", "
 					+ deathYear + ");";
@@ -173,6 +182,11 @@ void artistsSelected()
 				getline(cin, name);
 				cout << tabDepth << "Year of death: ";
 				getline(cin, deathYear);
+
+				if (!isNum(birthYear)){
+					cout << tabDepth << "ERROR: Invalid year" << endl << endl;
+					break;
+				}
 
 				command = "UPDATE Artist SET deathYear = " + deathYear
 					+ " WHERE (name == \"" + name + "\");";
@@ -364,6 +378,11 @@ void museumsSelected()
 			cout << tabDepth << "Year Established: ";
 			getline(cin, yearEstab);
 
+			if (!isNum(yearEstab)){
+				cout << tabDepth << "ERROR: Invalid year" << endl << endl;
+				break;
+			}
+
 			command = "INSERT INTO Museum VALUES FROM (\"" + name + "\", \""
 				+ location + "\", " + yearEstab + ");";
 			dbCon.executeCommand(command);
@@ -469,6 +488,16 @@ void worksSelected()
 			getline(cin, year);
 			cout << tabDepth << "Value: ";
 			getline(cin, value);
+
+			if (!isNum(year)){
+				cout << tabDepth << "ERROR: Invalid year" << endl << endl;
+				break;
+			}
+
+			if (!isNum(value)){
+				cout << tabDepth << "ERROR: Invalid value" << endl << endl;
+				break;
+			}
 
 			command = "INSERT INTO Museum VALUES FROM (\"" + name + "\", \""
 				+ medium + "\", " + year + ", " + value + ");";
