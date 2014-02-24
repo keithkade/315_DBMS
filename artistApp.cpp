@@ -272,10 +272,13 @@ void showForArtists()
 				dbCon.executeCommand(command);
 
 				// these are all the artists in a museum
-				command = "artistsIn <- project (artistName) correctMuseum;";
+				command = "artistsIn <- rename (name) (project (artistName) correctMuseum;)";
 				dbCon.executeCommand(command);
 
-				command = "artistsNotIn <- Artist - artistsIn;";
+				command = "artistRenamed <- project (name) Artist;";
+				dbCon.executeCommand(command);
+
+				command = "artistsNotIn <- artistRenamed - artistsIn;";
 				dbCon.executeCommand(command);
 
 				cout << tabDepth << "List of artists\n" << endl;
@@ -295,6 +298,7 @@ void showForArtists()
 			case 5:
 				return;
 			default:
+				tabDepth = "\t\t";
 				continue;
 		}
 	}
@@ -519,7 +523,7 @@ void worksSelected()
 
 			command = "tempName <- select (artistName == \"" + artistName + "\") ArtistWorks;";
 			dbCon.executeCommand(command);
-			command = "result <- project (workNames) tempName;";
+			command = "result <- project (workName) tempName;";
 			dbCon.executeCommand(command);
 			command = "SHOW result;";
 			dbCon.executeCommand(command);

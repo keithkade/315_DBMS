@@ -454,9 +454,8 @@ Table Database::crossProduct(const string& tableName1, const string& tableName2)
 }
 
 Table Database::naturalJoin(const string& tableName1, const string& tableName2){
-	//allTables returns a table, jsut call productWith on those tables
-	Table t;
-	return t;
+	//allTables returns a table, just call naturalJoinWith on those tables
+	return allTables[tableName1].naturalJoinWith(allTables[tableName2]);
 }
 
 Table Database::getTable(const string& tableName){

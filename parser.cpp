@@ -438,7 +438,8 @@ Table Parser::atomExpression(vector<Token>& tokens)
 			{
 				return curTableIt->second;
 			}
-			else{
+			else
+			{
 				return rdbms->getTable(tokens[0].content);
 			}
 		}

@@ -106,7 +106,7 @@ vector<Token> afterAssignQueryLex(string line){
 			makeCommVarTok(afterRetVecter, curString);
 			curString = "";
 			Token minusTok(Token::tokenType::SYMBOL);
-			minusTok.content = '+';
+			minusTok.content = '-';
 			afterRetVecter.push_back(minusTok);
 		}
 
@@ -350,7 +350,7 @@ vector<Token> commandLex(string line){
 			makeCommVarTok(retRow, curString);
 			curString = "";
 			Token minusTok(Token::tokenType::SYMBOL);
-			minusTok.content = '+';
+			minusTok.content = '-';
 			retRow.push_back(minusTok);
 		}
 
