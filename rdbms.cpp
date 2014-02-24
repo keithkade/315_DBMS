@@ -39,6 +39,9 @@ bool Table::operator==(const Table &t)
 Table Table::projectFromTable(const vector<string>& projectedNames){
 	//table to return
 	Table projectedTable(projectedNames, keyNames);
+	//if no data to project, return empty table
+	if(data.size() == 0)
+		return projectedTable;
 
 	//get the indices of the attributes to be projected
 	vector<int> attIndices;
@@ -179,7 +182,7 @@ Table Table::productWith(const Table& paramTable){
 		for (int secondT = 0; secondT < paramTable.data.size(); ++secondT){
 			//create newRow by combining thisTable and paramTable rows
 			vector<Datum> newRow = thisTable.data[firstT];
-			for (int col = 0; col < paramTable.data.size(); ++col){
+			for (int col = 0; col < paramTable.data[0].size(); ++col){
 				newRow.push_back(paramTable.data[secondT][col]);
 			}
 
