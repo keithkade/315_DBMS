@@ -382,7 +382,7 @@ void Database::updateTable(const string& tableName, const vector<string>& attrib
 		}
 	}
 	
-	bool isPrimaryModified; // set to let us know if we are updating primary keys or not
+	bool isPrimaryModified = false; // set to let us know if we are updating primary keys or not
 	for (int i = 0; i < allTables[tableName].keyNames.size(); i++){
 		for (int j = 0; j < attributeName.size(); j++){
 			if (allTables[tableName].keyNames[i] == attributeName[j]){
