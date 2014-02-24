@@ -307,6 +307,8 @@ bool Table::duplicateExists(const vector<Datum>& newRow){
 }
 	
 void Table::printTable(){
+
+	int width = 25;
 	cout << left;
 	cout << "---------------------------------------------------------" 
 		"--------------------" << endl;
@@ -314,17 +316,17 @@ void Table::printTable(){
 	for (int i = 0; i < attributeNames.size(); i++){
 		tempAtt = attributeNames[i];
 		transform(tempAtt.begin(), tempAtt.end(), tempAtt.begin(), toupper);
-		cout << setw(15) << tempAtt;
+		cout << setw(width) << tempAtt;
 	}
 
 	cout << endl;
 	for (int i = 0; i<data.size(); i++){
 		for (int j = 0; j<attributeNames.size(); j++){
 			if (data[i][j].numData == -999){
-				cout << setw(15) << data[i][j].stringData;
+				cout << setw(width) << data[i][j].stringData;
 			}
 			else{
-				cout << setw(15) << data[i][j].numData;
+				cout << setw(width) << data[i][j].numData;
 			}
 		}
 		cout << endl;
@@ -382,7 +384,7 @@ void Database::updateTable(const string& tableName, const vector<string>& attrib
 		}
 	}
 	
-	bool isPrimaryModified; // set to let us know if we are updating primary keys or not
+	bool isPrimaryModified = false; // set to let us know if we are updating primary keys or not
 	for (int i = 0; i < allTables[tableName].keyNames.size(); i++){
 		for (int j = 0; j < attributeName.size(); j++){
 			if (allTables[tableName].keyNames[i] == attributeName[j]){
