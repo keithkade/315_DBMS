@@ -61,6 +61,7 @@ int main()
 
 				break;
 			case 3:	// Periods
+				periodsSelected();
 
 				break;
 			case 4:	// Works
@@ -82,6 +83,9 @@ int main()
 	getchar();
 }
 
+bool isNum(string& input) {
+	return all_of(input.begin(), input.end(), ::isdigit);
+}
 
 bool exists(string filePath)
 {
@@ -141,6 +145,12 @@ void artistsSelected()
 				cout << tabDepth << "Artist's nationality: ";
 				getline(cin, nationality);
 
+				//check that year inputs are numeric
+				if (!isNum(birthYear) || !isNum(birthYear)){
+					cout << tabDepth << "ERROR: Invalid year" << endl << endl;
+					break;
+				}
+
 				command = "INSERT INTO Artist VALUES FROM (\"" + name + "\", "
 					+ birthYear + ", \"" + nationality + "\", "
 					+ deathYear + ");";
@@ -173,6 +183,11 @@ void artistsSelected()
 				getline(cin, name);
 				cout << tabDepth << "Year of death: ";
 				getline(cin, deathYear);
+
+				if (!isNum(birthYear)){
+					cout << tabDepth << "ERROR: Invalid year" << endl << endl;
+					break;
+				}
 
 				command = "UPDATE Artist SET deathYear = " + deathYear
 					+ " WHERE (name == \"" + name + "\");";
@@ -364,6 +379,11 @@ void museumsSelected()
 			cout << tabDepth << "Year Established: ";
 			getline(cin, yearEstab);
 
+			if (!isNum(yearEstab)){
+				cout << tabDepth << "ERROR: Invalid year" << endl << endl;
+				break;
+			}
+
 			command = "INSERT INTO Museum VALUES FROM (\"" + name + "\", \""
 				+ location + "\", " + yearEstab + ");";
 			dbCon.executeCommand(command);
@@ -470,6 +490,16 @@ void worksSelected()
 			cout << tabDepth << "Value: ";
 			getline(cin, value);
 
+			if (!isNum(year)){
+				cout << tabDepth << "ERROR: Invalid year" << endl << endl;
+				break;
+			}
+
+			if (!isNum(value)){
+				cout << tabDepth << "ERROR: Invalid value" << endl << endl;
+				break;
+			}
+
 			command = "INSERT INTO Museum VALUES FROM (\"" + name + "\", \""
 				+ medium + "\", " + year + ", " + value + ");";
 			dbCon.executeCommand(command);
@@ -532,6 +562,86 @@ void worksSelected()
 
 			break;
 		case 7:
+			return;
+		default:
+			continue;
+		}
+	}
+}
+
+void periodsSelected(){
+	//Add
+	//Delete
+	//Show all
+
+	string selectionStr;
+	int selection = 0;
+
+	while (true)
+	{
+		cout << tabDepth << "Enter the number corresponding to what you want to do." << endl;
+		cout << tabDepth << "1 - Add period" << endl;
+		cout << tabDepth << "2 - Remove period" << endl;
+		cout << tabDepth << "3 - Show all periods" << endl;
+		cout << tabDepth << "4 - Return to previous menu" << endl;
+
+		cout << tabDepth << "Selection: ";
+		getline(cin, selectionStr);
+		selection = atoi(selectionStr.c_str());
+		cout << endl;
+
+		// new tabDepth after selection
+		tabDepth = "\t\t";
+
+		// variables needed within switch
+		string command;
+		string name;
+		string year;
+
+		// switch based on user choice
+		switch (selection)
+		{
+		case 1:
+			cout << tabDepth << "Adding a period\n" << endl;
+
+			cout << tabDepth << "Period name: ";
+			getline(cin, name);
+			cout << tabDepth << "Year started: ";
+			getline(cin, year);
+
+			//check that year inputs are numeric
+			if (!isNum(year)){
+				cout << tabDepth << "ERROR: Invalid year" << endl << endl;
+				break;
+			}
+
+			command = "INSERT INTO Period VALUES FROM (\"" + name + "\", "
+				+ year + ");";
+			dbCon.executeCommand(command);
+
+			cout << endl;
+			tabDepth = "\t";
+			break;
+		case 2:
+			cout << tabDepth << "Removing a period\n" << endl;
+
+			cout << tabDepth << "Period name: ";
+			getline(cin, name);
+
+			command = "DELETE FROM Period WHERE (name == \"" + name + "\");";
+			dbCon.executeCommand(command);
+
+			cout << endl;
+			tabDepth = "\t";
+			break;
+		case 3:
+			cout << tabDepth << "List of all Periods\n" << endl;
+			command = "SHOW Period;";
+			dbCon.executeCommand(command);
+
+			tabDepth = "\t";
+			break;
+		case 4:
 			return;
 		default:
 			continue;
