@@ -266,15 +266,15 @@ Table Table::naturalJoinWith(const Table& paramTable){
 	return joinedTable;
 }
 
-Table Table::selectFromTable(Table selectTable, ConditionNode condition){
-	Table retTable(selectTable.attributeNames, selectTable.keyNames);
+Table Table::selectFromTable(ConditionNode condition){
+	Table retTable(attributeNames, keyNames);
 
 	// Begin iterating from end so that removes don't change position of any data we have yet to look at.
 	vector<vector<Datum> >::iterator it;
-	it = selectTable.data.end();
-	while (it != selectTable.data.begin()) {
+	it = data.end();
+	while (it != data.begin()) {
 		it--;
-		if (condition.eval(selectTable.attributeNames, *it)) {
+		if (condition.eval(attributeNames, *it)) {
 			retTable.data.push_back(*it);
 		}
 	}
@@ -421,6 +421,8 @@ void Database::updateTable(const string& tableName, const vector<string>& attrib
 }
 
 Table Database::selectFromTable(const string& tableName, ConditionNode condition){
+	return allTables[tableName].selectFromTable(condition);
+	/*
 	Table retTable(allTables[tableName].attributeNames, allTables[tableName].keyNames);
 
 	// Begin iterating from end so that removes don't change position of any data we have yet to look at.
@@ -433,6 +435,7 @@ Table Database::selectFromTable(const string& tableName, ConditionNode condition
 		}
 	}
 	return retTable;
+	*/
 }
 
 Table Database::projectFromTable(const string& tableName, const vector<string>& projectedNames){

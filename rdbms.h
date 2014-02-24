@@ -64,7 +64,7 @@ struct Table{
 	Table naturalJoinWith(const Table& paramTable);
 
 	//return a new relation that contains all rows that satisfy the condition
-	Table selectFromTable(Table selectTable, ConditionNode condition);
+	Table selectFromTable(ConditionNode condition);
 
 	//returns true if there is already a row with the the same primary key as the row argument
 	bool duplicateExists(const std::vector<Datum>& newRow);

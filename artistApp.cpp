@@ -256,12 +256,23 @@ void showForArtists()
 
 				test = dbCon.getTempTable("crossProduct");
 
-				command = "correctMuseum <- select (museumName == \"" + name + "\") crossProduct;";
+				command = "cpRenamed <- rename (museumName, workName1, artistName, workName2) crossProduct;";
+				dbCon.executeCommand(command);
+
+				test = dbCon.getTempTable("cpRenamed");
+
+				command = "correctMuseum <- select (museumName == \"" + name + "\") cpRenamed;";
 				dbCon.executeCommand(command);
 
 				test = dbCon.getTempTable("correctMuseum");
 
-				command = "artistNames <- project (artistName) correctMuseum;";
+				// eliminate duplicates
+				command = "noDuplicates <- select (workName1 == workName2) correctMuseum;";
+				dbCon.executeCommand(command);
+
+				test = dbCon.getTempTable("noDuplicates");
+
+				command = "artistNames <- project (artistName) noDuplicates;";
 				dbCon.executeCommand(command);
 
 				test = dbCon.getTempTable("artistNames");

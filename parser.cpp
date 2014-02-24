@@ -486,7 +486,7 @@ Table Parser::selection(vector<Token>& tokens)
 	ConditionNode* conditionTree = condition(condTokens);
 	Table selectedTable = atomExpression(atomTokens);
 
-	return selectedTable.selectFromTable(selectedTable, *conditionTree);
+	return selectedTable.selectFromTable(*conditionTree);
 }
 
 Table Parser::projection(vector<Token>& tokens)
