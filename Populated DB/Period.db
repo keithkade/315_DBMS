@@ -1,0 +1,2 @@
+CREATE TABLE Period (name VARCHAR(30), year INTEGER) PRIMARY KEY (name);
+INSERT INTO Period VALUES FROM ("Expressionism", 1901);
