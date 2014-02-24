@@ -522,7 +522,7 @@ void worksSelected()
 			command = "tempName <- select (artistName == \"" + artistName + "\") ArtistWorks;";
 			dbCon.executeCommand(command);
 			test = dbCon.getTempTable("tempName");
-			command = "result <- project (workNames) tempName;";
+			command = "result <- project (workName) tempName;";
 			dbCon.executeCommand(command);
 			test = dbCon.getTempTable("result");
 			command = "SHOW result;";
@@ -535,7 +535,7 @@ void worksSelected()
 
 			command = "tempName <- select (periodName == \"" + periodName + "\") PeriodWorks;";
 			dbCon.executeCommand(command);
-			command = "result <- project (workNames) tempName;";
+			command = "result <- project (workName) tempName;";
 			dbCon.executeCommand(command);
 			command = "SHOW result;";
 			dbCon.executeCommand(command);
@@ -548,7 +548,7 @@ void worksSelected()
 
 			command = "tempName <- select (museumName == \"" + museumName + "\") MuseumContains;";
 			dbCon.executeCommand(command);
-			command = "result <- project (workNames) tempName;";
+			command = "result <- project (workName) tempName;";
 			dbCon.executeCommand(command);
 			command = "SHOW result;";
 			dbCon.executeCommand(command);
@@ -560,7 +560,7 @@ void worksSelected()
 
 			command = "tempName <- select (currentValue > " + value + ") Works;";
 			dbCon.executeCommand(command);
-			command = "result <- project (workNames) tempName;";
+			command = "result <- project (workName) tempName;";
 			dbCon.executeCommand(command);
 			command = "SHOW result;";
 			dbCon.executeCommand(command);
