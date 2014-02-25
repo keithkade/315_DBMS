@@ -1,5 +1,6 @@
-CREATE TABLE ArtistWorks (artistName VARCHAR(30), workName VARCHAR(40)) PRIMARY KEY (artistName, workName);
+CREATE TABLE ArtistWorks (artistName VARCHAR(20), workName VARCHAR(20)) PRIMARY KEY (artistName, workName);
 INSERT INTO ArtistWorks VALUES FROM ("Pablo Picasso", "Guernica");
 INSERT INTO ArtistWorks VALUES FROM ("Pablo Picasso", "The Old Guitarist");
 INSERT INTO ArtistWorks VALUES FROM ("Jackson Pollock", "No. 5, 1948");
-INSERT INTO ArtistWorks VALUES FROM ("Pablo Picasso", "The Wounded Deer");
+INSERT INTO ArtistWorks VALUES FROM ("Frida Kahlo", "The Wounded Deer");
+INSERT INTO ArtistWorks VALUES FROM ("Leonardo da Vinci", "Mona Lisa");

@@ -1,2 +1,3 @@
-CREATE TABLE MuseumContains (museumName VARCHAR(30), workName VARCHAR(40)) PRIMARY KEY (museumName, workName);
+CREATE TABLE MuseumContains (museumName VARCHAR(20), workName VARCHAR(20)) PRIMARY KEY (museumName, workName);
 INSERT INTO MuseumContains VALUES FROM ("Art Institute of Chicago", "The Old Guitarist");
+INSERT INTO MuseumContains VALUES FROM ("MOMA", "Mona Lisa");

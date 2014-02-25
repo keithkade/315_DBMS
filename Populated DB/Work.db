@@ -1,6 +1,6 @@
-CREATE TABLE Work (name VARCHAR(40), medium VARCHAR(20), yearMade INTEGER, currentValue INTEGER) PRIMARY KEY (name);
+CREATE TABLE Work (name VARCHAR(20), medium VARCHAR(20), yearMade INTEGER, currentValue INTEGER) PRIMARY KEY (name);
 INSERT INTO Work VALUES FROM ("The Wounded Deer", "Oil", 1946, 500000);
 INSERT INTO Work VALUES FROM ("No. 5, 1948", "Oil", 1948, 140000000);
 INSERT INTO Work VALUES FROM ("Guernica", "Oil", 1937, 10000000);
 INSERT INTO Work VALUES FROM ("The Old Guitarist", "Oil", 1904, 20000000);
-INSERT INTO Work VALUES FROM ("Mona Lisa", "Oil", 1506, 7600000000);
+INSERT INTO Work VALUES FROM ("Mona Lisa", "Oil", 1506, 1506);

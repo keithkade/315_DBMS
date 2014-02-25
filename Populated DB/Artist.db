@@ -5,3 +5,4 @@ INSERT INTO Artist VALUES FROM ("Jackson Pollock", 1912, "American", 1973);
 INSERT INTO Artist VALUES FROM ("Mark Rothko", 1903, "American", 1970);
 INSERT INTO Artist VALUES FROM ("Frida Kahlo", 1907, "Mexican", 1954);
 INSERT INTO Artist VALUES FROM ("Leonardo da Vinci", 1452, "Italian", 1519);
+INSERT INTO Artist VALUES FROM ("Alive", 1980, "American", 0);
