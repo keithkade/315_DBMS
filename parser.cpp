@@ -735,8 +735,15 @@ void Parser::query(vector<Token>& tokens)
 
 	Table resultTable = expression(exprTokens);
 
-
-	tempTables.insert(pair<string, Table>(queryTableName, resultTable));
+	map<string, Table>::iterator nameTaken = tempTables.find(queryTableName);
+	if (nameTaken == tempTables.end())
+	{
+		tempTables.insert(pair<string, Table>(queryTableName, resultTable));
+	}
+	else{
+		tempTables.erase(nameTaken);
+		tempTables.insert(pair<string, Table>(queryTableName, resultTable));
+	}
 }
 
 void Parser::open(vector<Token>& tokens)
