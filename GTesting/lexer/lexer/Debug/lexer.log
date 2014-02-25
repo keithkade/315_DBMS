@@ -1,0 +1,23 @@
+﻿Build started 2/24/2014 10:31:24 PM.
+     1>Project "C:\Users\vicfer00\Desktop\csce 315\lexer\lexer\lexer.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(381,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (lexer.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\vicfer00\Desktop\gtest\gtest-1.7.0\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\Project1UnitTesting.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ParserTest.cpp rdbmsTest.cpp
+         rdbmsTest.cpp
+         ParserTest.cpp
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\vicfer00\Desktop\csce 315\lexer\Debug\Project1UnitTesting.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Users\vicfer00\Desktop\gtest\gtest-1.7.0\msvc\gtest\Debug" gtestd.lib gtest_maind.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\vicfer00\Desktop\csce 315\lexer\Debug\Project1UnitTesting.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\vicfer00\Desktop\csce 315\lexer\Debug\Project1UnitTesting.lib" /MACHINE:X86 Debug\conditionTree.obj
+         Debug\lexer.obj
+         Debug\lexerTest.obj
+         Debug\parser.obj
+         Debug\ParserTest.obj
+         Debug\rdbms.obj
+         Debug\rdbmsTest.obj
+         Debug\stdafx.obj
+         lexer.vcxproj -> C:\Users\vicfer00\Desktop\csce 315\lexer\Debug\Project1UnitTesting.exe
+     1>Done Building Project "C:\Users\vicfer00\Desktop\csce 315\lexer\lexer\lexer.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:07.38
