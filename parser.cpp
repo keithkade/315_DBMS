@@ -879,7 +879,6 @@ void Parser::update(vector<Token>& tokens)
 
 void Parser::insert(vector<Token>& tokens)
 {
-	//printTokenList(tokens);
 	vector<Token>::iterator iter = tokens.begin();
 	string tableName = (iter + 2)->content;
 	iter = iter + 5;
