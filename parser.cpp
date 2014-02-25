@@ -717,8 +717,7 @@ Table Parser::naturalJoin(vector<Token>& tokens)
 	Table natJoinArgTable1 = atomExpression(atom1Tokens);
 	Table natJoinArgTable2 = atomExpression(atom2Tokens);
 
-	//return prodArgTable1.naturalJoinWith(prodArgTable2);
-	return natJoinArgTable1;
+	return natJoinArgTable1.naturalJoinWith(natJoinArgTable2);
 }
 
 void Parser::query(vector<Token>& tokens)
