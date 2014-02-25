@@ -107,6 +107,7 @@ Table Table::unionWith(const Table& paramTable){
 		unionTable.data.push_back(paramTable.data[i]);
 	}
 
+
 	//now remove duplicates from unionTable
 	//efficiency is not a concern in our system..
 	bool isDuplicate;
@@ -116,7 +117,7 @@ Table Table::unionWith(const Table& paramTable){
 			isDuplicate = true;
 			//compare individual rows
 			for (int col = 0; col < unionTable.data[0].size(); ++col){
-				if (unionTable.data[row][col] != unionTable.data[dupRow][col]){
+				if (row == dupRow || unionTable.data[row][col] != unionTable.data[dupRow][col]){
 					isDuplicate = false;
 					break;
 				}
