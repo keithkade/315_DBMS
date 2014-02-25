@@ -477,12 +477,10 @@ void museumsSelected()
 
 			break;
 		case 5:
-			cout << tabDepth << "Museum name: ";
-			getline(cin, name);
 			cout << tabDepth << "Artist name: ";
 			getline(cin, artistName);
 
-			command = "tempName <- select (museumName == \"" + name + "\" && artistName == \"" + artistName + "\") "
+			command = "tempName <- select ( artistName == \"" + artistName + "\") "
 				"(MuseumContains JOIN ArtistWorks);";
 			dbCon.executeCommand(command);
 			command = "result <- project (museumName) tempName;";
