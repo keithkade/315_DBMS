@@ -606,10 +606,20 @@ Table Parser::myUnion(vector<Token>& tokens)
 		iter++;
 	}
 
+	printTokenList(atom1Tokens);
+	printTokenList(atom2Tokens);
+
 	Table uniArgTable1 = atomExpression(atom1Tokens);
 	Table uniArgTable2 = atomExpression(atom2Tokens);
 
-	return uniArgTable1.unionWith(uniArgTable2);
+	uniArgTable1.printTable();
+	uniArgTable2.printTable();
+
+	Table result = uniArgTable1.unionWith(uniArgTable2);
+
+	result.printTable();
+
+	return result;
 }
 
 Table Parser::difference(vector<Token>& tokens)
@@ -938,6 +948,7 @@ void Parser::myDelete(vector<Token>& tokens)
 
 void Parser::command(vector<Token>& tokens)
 {
+	printTokenList(tokens);
 	if (tokens[0].content.compare("OPEN") == 0)
 	{
 		open(tokens);
