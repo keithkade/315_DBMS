@@ -240,7 +240,7 @@ Table Table::naturalJoinWith(const Table& paramTable){
 	bool allCommonAttsEqual;
 	for (int this_row = 0; this_row < data.size(); ++this_row){
 		//loop through paramTable data to find indices of matching rows
-		for (int param_row = 0; param_row < paramTable.attributeNames.size(); ++param_row){
+		for (int param_row = 0; param_row < paramTable.data.size(); ++param_row){
 			allCommonAttsEqual = true;
 			//loop through columns in data to compare attributes with same name for equality
 			for (int column = 0; column < thisAttIndices.size(); ++column) {
