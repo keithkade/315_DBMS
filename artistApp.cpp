@@ -386,7 +386,7 @@ void museumsSelected()
 		cout << tabDepth << "6 - Return to previous menu" << endl;
 
 		cout << tabDepth << "Selection: ";
-		getline(cin, selectionStr); 
+		getline(cin, selectionStr);
 		selection = atoi(selectionStr.c_str());
 		cout << endl;
 
@@ -400,6 +400,8 @@ void museumsSelected()
 		string workName;
 		string artistName;
 		string yearEstab;
+		int musNumber;
+		vector<string> museums;
 
 		// switch based on user choice
 		switch (selection)
@@ -434,7 +436,7 @@ void museumsSelected()
 		case 3:
 			cout << tabDepth << "Museum name: ";
 			getline(cin, name);
-			cout << tabDepth << "Work name: "; 
+			cout << tabDepth << "Work name: ";
 			getline(cin, workName);
 
 			command = "INSERT INTO MuseumContains VALUES FROM (\"" + name + "\", \"" + workName + "\");";
@@ -442,15 +444,37 @@ void museumsSelected()
 
 			break;
 		case 4:
-			cout << tabDepth << "Museum name: ";
-			getline(cin, name);
+			musNumber = 1;
+			do{
+				cout << tabDepth << "Museum " << musNumber << " name (enter \"exit\" to stop): ";
+				musNumber++;
+				getline(cin, name);
+				if (name.compare("exit") == 0)
+					break;
+				museums.push_back(name);
+			} while (true);
 
-			command = "tempName <- select (museumName == \"" + name + "\") MuseumContains;";
-			dbCon.executeCommand(command);
+			for (int i = 0; i < museums.size(); i++)
+			{
+				command = "tempName " + to_string(i) + " <- select (museumName == \"" + museums[i] + "\") MuseumContains;";
+				dbCon.executeCommand(command);
+			}
+
+			command = "tempName <-";
+			for (int i = 0; i < museums.size(); i++)
+			{
+				command += " " + museums[i] + " +";
+			}
+			command.pop_back(); // remove trailing +
+			command.push_back(';');
+
+			cout << command;
+
 			command = "result <- project (workName) tempName;";
 			dbCon.executeCommand(command);
 			command = "SHOW result;";
 			dbCon.executeCommand(command);
+
 
 			break;
 		case 5:
