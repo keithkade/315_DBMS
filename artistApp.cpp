@@ -381,7 +381,7 @@ void museumsSelected()
 		cout << tabDepth << "1 - Add museum" << endl;
 		cout << tabDepth << "2 - Remove museum" << endl;
 		cout << tabDepth << "3 - Museum buys work" << endl;
-		cout << tabDepth << "4 - Show works in a museum" << endl;
+		cout << tabDepth << "4 - Show works in a museum(s)" << endl;
 		cout << tabDepth << "5 - Show museum(s) that have artist" << endl;
 		cout << tabDepth << "6 - Return to previous menu" << endl;
 
@@ -456,19 +456,18 @@ void museumsSelected()
 
 			for (int i = 0; i < museums.size(); i++)
 			{
-				command = "tempName " + to_string(i) + " <- select (museumName == \"" + museums[i] + "\") MuseumContains;";
+				command = "tempName" + to_string(i) + " <- select (museumName == \"" + museums[i] + "\") MuseumContains;";
 				dbCon.executeCommand(command);
 			}
 
 			command = "tempName <-";
 			for (int i = 0; i < museums.size(); i++)
 			{
-				command += " " + museums[i] + " +";
+				command += " tempName" + to_string(i) + " +";
 			}
 			command.pop_back(); // remove trailing +
-			command.push_back(';');
-
-			cout << command;
+			command += ";";
+			dbCon.executeCommand(command);
 
 			command = "result <- project (workName) tempName;";
 			dbCon.executeCommand(command);
