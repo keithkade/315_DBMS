@@ -120,6 +120,8 @@ Table Table::unionWith(const Table& paramTable){
 					isDuplicate = false;
 					break;
 				}
+				else if (row == dupRow)
+					isDuplicate = true;
 			}
 			if (isDuplicate){
 				unionTable.data.erase(unionTable.data.begin() + dupRow);
